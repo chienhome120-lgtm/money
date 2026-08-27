@@ -91,6 +91,26 @@ h1{font-size:24px;margin:0}
 }
 .sheet-status.ok{background:#eaf6ef;color:#17633f}
 .sheet-status.err{background:#fff0ef;color:#9b342e}
+#sheetStatus{
+  display:none;
+  position:fixed;
+  left:50%;
+  bottom:82px;
+  transform:translateX(-50%);
+  z-index:60;
+  width:min(720px,calc(100% - 24px));
+  margin:0;
+  padding:11px 13px;
+  border:1px solid #ded2cf;
+  border-radius:12px;
+  box-shadow:0 10px 28px rgba(0,0,0,.16);
+  background:#fff;
+  font-size:13px;
+  line-height:1.5;
+}
+#sheetStatus.ok{background:#eaf6ef;color:#17633f;border-color:#b8dfc8}
+#sheetStatus.err{background:#fff0ef;color:#9b342e;border-color:#efc2bd}
+#sheetStatus.sending{background:#fff8e8;color:#7a5711;border-color:#ead39b}
 .ar-toolbar{display:grid;grid-template-columns:1.5fr .8fr .9fr;gap:8px}
 .ar-status{margin-top:8px;padding:9px 10px;border-radius:10px;background:#f4f1f0;font-size:13px;line-height:1.5;color:var(--muted)}
 .ar-status.ok{background:#eaf6ef;color:#17633f}
@@ -432,8 +452,8 @@ h1{font-size:24px;margin:0}
   </section>
 
   <section style="display:none" aria-hidden="true">
-    <input id="gasUrl" type="hidden" value="https://script.google.com/macros/s/AKfycbx3sOcG9n-I0r5xIq2EINrfrKITaWSqRRFxf0G4OOYcPIeVBmgWwwdiux6QWokS2QPylw/exec">
-    <div id="sheetStatus" class="sheet-status"></div>
+    <input id="gasUrl" type="hidden" value="https://script.google.com/macros/s/AKfycbxecNe09UzArp9x1k6-dHdz3w1pYploneSoAN3wvMsLHtz4Fqud0Vhr-060_B9e3BU/exec">
+    <input id="targetSpreadsheetId" type="hidden" value="1D5olrqVKOSFdx0vpop1MB7TSV7I72plLxbcqR-nZx5I">
   </section>
 
   
@@ -478,6 +498,8 @@ h1{font-size:24px;margin:0}
     </div>
   </section>
 </div>
+
+<div id="sheetStatus" class="sheet-status" role="status" aria-live="polite"></div>
 
 <div class="bottom">
   <div class="bottom-inner">
@@ -2289,6 +2311,9 @@ function initCustomerSearch(){
   });
 }
 
+const TARGET_SPREADSHEET_ID = '1D5olrqVKOSFdx0vpop1MB7TSV7I72plLxbcqR-nZx5I';
+const TARGET_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1D5olrqVKOSFdx0vpop1MB7TSV7I72plLxbcqR-nZx5I/edit?usp=sharing';
+
 function getReceiptPayload(){
   const result=calc();
   const checks=[...document.querySelectorAll('.check-row')].map((row,i)=>({
@@ -2304,6 +2329,8 @@ function getReceiptPayload(){
 
   return {
     action:'saveReceipt',
+    spreadsheetId:TARGET_SPREADSHEET_ID,
+    spreadsheetUrl:TARGET_SPREADSHEET_URL,
     uploadedAt:new Date().toISOString(),
     receipt:{
       receiptNo:'',
@@ -2341,46 +2368,85 @@ function saveGasUrl(){
   if(url) localStorage.setItem('receiptGasUrl',url);
 }
 
-async function uploadReceiptToGoogleSheet(){
+function showSheetStatus(message,type){
   const status=$('sheetStatus');
+  if(!status) return;
+  status.className='sheet-status' + (type ? ' '+type : '');
+  status.textContent=message||'';
+  status.style.display=message ? 'block' : 'none';
+}
+
+async function uploadReceiptToGoogleSheet(){
   const btn=$('uploadSheetBtn');
   const url=($('gasUrl').value||'').trim();
 
   if(!url || !/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/i.test(url)){
-    status.className='sheet-status err';
-    status.textContent='請先輸入正確的 Google Apps Script Web App /exec 網址。';
-    $('gasUrl').focus();
+    showSheetStatus('Google Apps Script 網址設定錯誤，無法上傳。','err');
     return;
   }
 
   saveGasUrl();
-  const payload=getReceiptPayload();
 
-const photoCount=payload.cheques.filter(c=>c.photoData).length;
+  const payload=getReceiptPayload();
+  payload.targetSpreadsheetId = $('targetSpreadsheetId') ? $('targetSpreadsheetId').value : '';
+
+  const bodyText=JSON.stringify(payload);
+  const photoCount=payload.cheques.filter(c=>c.photoData).length;
   const returnCount=(payload.returns||[]).length;
   const returnPhotoCount=(payload.returns||[]).filter(r=>r.photoData).length;
+
   btn.disabled=true;
-  status.className='sheet-status';
-  status.innerHTML=`<span class="upload-progress">上傳中…</span> 收帳資料 + ${photoCount} 張支票照片 + ${returnCount} 筆退貨（${returnPhotoCount} 張照片）`;
+  const oldBtnText=btn.textContent;
+  btn.textContent='上傳中…';
+
+  showSheetStatus(
+    `正在送出收帳資料… 支票照片 ${photoCount} 張、退貨 ${returnCount} 筆（照片 ${returnPhotoCount} 張）`,
+    'sending'
+  );
+
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),30000);
 
   try{
-    // 使用 text/plain 避免瀏覽器發出 CORS preflight。
-    // Apps Script Web App 會在 doPost(e) 內解析 JSON。
     await fetch(url,{
       method:'POST',
       mode:'no-cors',
       cache:'no-store',
+      redirect:'follow',
       headers:{'Content-Type':'text/plain;charset=utf-8'},
-      body:JSON.stringify(payload)
+      body:bodyText,
+      signal:controller.signal
     });
 
-    status.className='sheet-status ok';
-    status.textContent='';
+    clearTimeout(timer);
+
+    showSheetStatus(
+      '資料已送出。請查看 Google Sheet「收帳紀錄」；若未出現，查看「上傳紀錄」即可看到後端錯誤原因。',
+      'ok'
+    );
+
+    setTimeout(()=>{
+      const s=$('sheetStatus');
+      if(s && s.classList.contains('ok')) s.style.display='none';
+    },8000);
+
   }catch(err){
-    status.className='sheet-status err';
-    status.textContent='上傳失敗：'+(err.message||err);
+    clearTimeout(timer);
+
+    if(err && err.name==='AbortError'){
+      showSheetStatus(
+        '上傳超過 30 秒。請先查看 Google Sheet「上傳紀錄」是否已收到資料，再重試，以免重複上傳。',
+        'err'
+      );
+    }else{
+      showSheetStatus(
+        '上傳失敗：'+(err && err.message ? err.message : String(err)),
+        'err'
+      );
+    }
   }finally{
     btn.disabled=false;
+    btn.textContent=oldBtnText || '上傳本次收帳資料';
   }
 }
 
@@ -2493,9 +2559,10 @@ document.querySelectorAll('input').forEach(e=>{
   }
 });
 
-const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbx3sOcG9n-I0r5xIq2EINrfrKITaWSqRRFxf0G4OOYcPIeVBmgWwwdiux6QWokS2QPylw/exec';
-const savedGasUrl=localStorage.getItem('receiptGasUrl');
-$('gasUrl').value = savedGasUrl || DEFAULT_GAS_URL;
+const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxecNe09UzArp9x1k6-dHdz3w1pYploneSoAN3wvMsLHtz4Fqud0Vhr-060_B9e3BU/exec';
+// 固定使用目前部署的 Apps Script；覆蓋手機瀏覽器曾儲存的舊網址
+localStorage.setItem('receiptGasUrl', DEFAULT_GAS_URL);
+$('gasUrl').value = DEFAULT_GAS_URL;
 
 if(!$('receiptDate').value){
   const now=new Date();
