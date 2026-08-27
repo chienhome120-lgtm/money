@@ -20,7 +20,7 @@ body{
     linear-gradient(145deg,#fff9f8,#fce9e7 54%,#fff);
   min-height:100vh;
 }
-.app{max-width:760px;margin:auto;padding:16px 14px 110px}
+.app{max-width:760px;margin:auto;padding:16px 14px 24px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 h1{font-size:24px;margin:0}
 .sub{font-size:13px;color:var(--muted);margin-top:4px}
@@ -95,7 +95,7 @@ h1{font-size:24px;margin:0}
   display:none;
   position:fixed;
   left:50%;
-  bottom:82px;
+  bottom:20px;
   transform:translateX(-50%);
   z-index:60;
   width:min(720px,calc(100% - 24px));
@@ -199,11 +199,15 @@ h1{font-size:24px;margin:0}
 
 
 .bottom{
-  position:fixed;left:0;right:0;bottom:0;z-index:20;background:#fffefdf2;
-  border-top:1px solid #eadedb;padding:10px 14px calc(10px + env(safe-area-inset-bottom));
-  backdrop-filter:blur(10px)
+  position:static;
+  z-index:auto;
+  background:transparent;
+  border-top:0;
+  padding:0;
+  margin:16px 0 4px;
+  backdrop-filter:none;
 }
-.bottom-inner{max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bottom-inner{max-width:none;width:100%;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .bottom .btn{height:52px;font-size:17px}
 #detailDialog,#modeDialog{
   border:0;border-radius:20px;padding:0;max-width:680px;width:calc(100% - 24px);
@@ -359,6 +363,158 @@ h1{font-size:24px;margin:0}
     font-size:10px !important;
   }
 }
+
+
+/* ===== 可移動簡易計算機 ===== */
+.calc-heading-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.calc-heading-row h2{margin:0}
+.mini-calc-launch{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  padding:0;
+  border:1px solid #d7dee7;
+  border-radius:10px;
+  background:#f5f7fa;
+  color:#293646;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:20px;
+  line-height:1;
+  box-shadow:none;
+  cursor:pointer;
+}
+.mini-calc-launch:active{transform:scale(.96)}
+.calc-target-active{
+  outline:2px solid #537089 !important;
+  outline-offset:1px;
+}
+.mini-calculator{
+  position:fixed;
+  z-index:10050;
+  width:min(310px,calc(100vw - 24px));
+  left:50%;
+  top:110px;
+  transform:translateX(-50%);
+  border:1px solid #cfd7e1;
+  border-radius:16px;
+  background:#ffffff;
+  box-shadow:0 18px 48px rgba(15,23,42,.24);
+  overflow:hidden;
+  user-select:none;
+  touch-action:auto;
+}
+.mini-calculator[hidden]{display:none!important}
+.mini-calc-head{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 10px 9px 12px;
+  background:#eef2f5;
+  border-bottom:1px solid #dce3ea;
+  cursor:grab;
+  touch-action:none;
+}
+.mini-calc-head.dragging{cursor:grabbing}
+.mini-calc-title{
+  flex:1;
+  min-width:0;
+  color:#344252;
+}
+.mini-calc-title-line{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.mini-calc-title-text{
+  flex:0 0 auto;
+  font-size:14px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.mini-calc-target{
+  display:block;
+  margin-top:2px;
+  color:#6c7885;
+  font-size:11px;
+  font-weight:600;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.mini-calc-close{
+  width:34px;
+  height:34px;
+  min-width:34px;
+  padding:0;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#596673;
+  font-size:20px;
+  cursor:pointer;
+}
+.mini-calc-body{padding:10px}
+.mini-calc-display{
+  width:100%;
+  min-height:58px;
+  margin:0 0 9px;
+  padding:8px 10px;
+  border:1px solid #ccd5df;
+  border-radius:11px;
+  background:#fafbfd;
+  color:#17212b;
+  text-align:right;
+  font-size:25px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+  box-sizing:border-box;
+}
+.mini-calc-keys{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+}
+.mini-calc-key{
+  min-height:44px;
+  padding:8px 4px;
+  border:1px solid #d9e0e7;
+  border-radius:10px;
+  background:#f6f8fa;
+  color:#263544;
+  font-size:18px;
+  font-weight:800;
+  cursor:pointer;
+}
+.mini-calc-key.op{background:#edf2f6}
+.mini-calc-key.equal{background:#405d73;color:#fff;border-color:#405d73}
+.mini-calc-paste{
+  flex:0 0 auto;
+  min-height:30px;
+  padding:5px 9px;
+  border:0;
+  border-radius:8px;
+  background:#293f52;
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  line-height:1.15;
+  white-space:nowrap;
+  cursor:pointer;
+}
+.mini-calc-paste:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:420px){
+  .mini-calculator{width:min(296px,calc(100vw - 18px));top:86px}
+  .mini-calc-key{min-height:42px}
+}
+
 </style>
 
 </head>
@@ -402,7 +558,10 @@ h1{font-size:24px;margin:0}
   </section>
 
   <section class="card">
-    <h2>帳款資料</h2>
+    <div class="calc-heading-row">
+      <h2>帳款資料</h2>
+      <button class="mini-calc-launch" id="miniCalculatorBtn" type="button" aria-label="開啟簡易計算機" title="簡易計算機">🧮</button>
+    </div>
     <div class="grid">
       <div class="field"><label>前期溢收</label><input id="prevOver" type="number" inputmode="decimal" value="0"></div>
       <div class="field"><label>前期尚欠</label><input id="prevDue" type="number" inputmode="decimal" value="0"></div>
@@ -497,18 +656,58 @@ h1{font-size:24px;margin:0}
       PDF 紙張固定為 A4 直式；收款單高度維持 148.5 mm，寬度由 105 mm 縮為 3/4，也就是 78.75 mm，並置中顯示。
     </div>
   </section>
+
+  <div class="bottom">
+    <div class="bottom-inner">
+      <button class="btn gray" id="detailBtn" type="button">檢視明細</button>
+      <button class="btn gray" id="receiptBtn" type="button">收款單</button>
+      <button class="btn primary" id="calcBtn" type="button">計算</button>
+      <button class="btn soft" id="uploadSheetBtn" type="button">上傳本次收帳資料</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="miniCalculator" class="mini-calculator" hidden aria-label="簡易計算機">
+  <div id="miniCalcHead" class="mini-calc-head">
+    <div class="mini-calc-title">
+      <div class="mini-calc-title-line">
+        <span class="mini-calc-title-text">簡易計算機</span>
+        <button id="miniCalcPaste" class="mini-calc-paste" type="button" aria-label="複製計算結果" title="複製計算結果">複製</button>
+      </div>
+      <span id="miniCalcTarget" class="mini-calc-target">尚未選擇欄位</span>
+    </div>
+    <button id="miniCalcClose" class="mini-calc-close" type="button" aria-label="關閉計算機">×</button>
+  </div>
+  <div class="mini-calc-body">
+    <input id="miniCalcDisplay" class="mini-calc-display" type="text" inputmode="decimal" value="0" aria-label="計算機顯示" autocomplete="off">
+    <div class="mini-calc-keys" id="miniCalcKeys">
+      <button class="mini-calc-key op" type="button" data-action="clear">C</button>
+      <button class="mini-calc-key op" type="button" data-action="backspace">⌫</button>
+      <button class="mini-calc-key op" type="button" data-action="percent">%</button>
+      <button class="mini-calc-key op" type="button" data-value="/">÷</button>
+      <button class="mini-calc-key" type="button" data-value="7">7</button>
+      <button class="mini-calc-key" type="button" data-value="8">8</button>
+      <button class="mini-calc-key" type="button" data-value="9">9</button>
+      <button class="mini-calc-key op" type="button" data-value="*">×</button>
+      <button class="mini-calc-key" type="button" data-value="4">4</button>
+      <button class="mini-calc-key" type="button" data-value="5">5</button>
+      <button class="mini-calc-key" type="button" data-value="6">6</button>
+      <button class="mini-calc-key op" type="button" data-value="-">−</button>
+      <button class="mini-calc-key" type="button" data-value="1">1</button>
+      <button class="mini-calc-key" type="button" data-value="2">2</button>
+      <button class="mini-calc-key" type="button" data-value="3">3</button>
+      <button class="mini-calc-key op" type="button" data-value="+">+</button>
+      <button class="mini-calc-key op" type="button" data-action="sign">±</button>
+      <button class="mini-calc-key" type="button" data-value="0">0</button>
+      <button class="mini-calc-key" type="button" data-value=".">.</button>
+      <button class="mini-calc-key equal" type="button" data-action="equals">=</button>
+    </div>
+  </div>
 </div>
 
 <div id="sheetStatus" class="sheet-status" role="status" aria-live="polite"></div>
 
-<div class="bottom">
-  <div class="bottom-inner">
-    <button class="btn gray" id="detailBtn" type="button">檢視明細</button>
-    <button class="btn gray" id="receiptBtn" type="button">收款單</button>
-    <button class="btn primary" id="calcBtn" type="button">計算</button>
-    <button class="btn soft" id="uploadSheetBtn" type="button">上傳本次收帳資料</button>
-  </div>
-</div>
 
 
 <dialog id="modeDialog">
@@ -2558,6 +2757,339 @@ document.querySelectorAll('input').forEach(e=>{
     e.addEventListener('change',()=>{ if(!receiptManualMode) setTimeout(updateReceipt,0); });
   }
 });
+
+
+// ===== 可移動簡易計算機 =====
+let miniCalcTargetField = null;
+let miniCalcPendingPasteValue = null;
+
+let miniCalcJustEvaluated = false;
+
+function miniCalcIsEligibleTarget(el){
+  if(!el) return false;
+  if(el.closest && el.closest('#miniCalculator')) return false;
+  if(el.matches && el.matches('input[type="number"]:not([readonly]):not([disabled])')) return true;
+  if(el.matches && el.matches('.receipt-money[contenteditable="true"]')) return true;
+  return false;
+}
+
+function miniCalcTargetName(el){
+  if(!el) return '尚未選擇欄位';
+  if(el.id){
+    const label = document.querySelector(`label[for="${el.id}"]`);
+    if(label) return label.textContent.trim();
+  }
+  const field = el.closest ? el.closest('.field') : null;
+  const fieldLabel = field ? field.querySelector('label') : null;
+  if(fieldLabel) return fieldLabel.textContent.trim();
+  const row = el.closest ? el.closest('tr') : null;
+  if(row){
+    const th = row.querySelector('th');
+    if(th) return th.textContent.trim();
+  }
+  return el.getAttribute('aria-label') || el.id || '已選取欄位';
+}
+
+function setMiniCalcTarget(el){
+  if(!miniCalcIsEligibleTarget(el)) return;
+  if(miniCalcTargetField && miniCalcTargetField !== el){
+    miniCalcTargetField.classList.remove('calc-target-active');
+  }
+  miniCalcTargetField = el;
+  miniCalcTargetField.classList.add('calc-target-active');
+  const targetText = $('miniCalcTarget');
+  if(targetText) targetText.textContent = '目前欄位：' + miniCalcTargetName(el);
+}
+
+document.addEventListener('focusin', e=>{
+  if(miniCalcIsEligibleTarget(e.target)) setMiniCalcTarget(e.target);
+});
+document.addEventListener('pointerdown', e=>{
+  if(miniCalcIsEligibleTarget(e.target)) setMiniCalcTarget(e.target);
+}, true);
+
+function miniCalcOpen(){
+  const panel=$('miniCalculator');
+  const display=$('miniCalcDisplay');
+  if(!panel || !display) return;
+  panel.hidden=false;
+  if(miniCalcTargetField){
+    const raw = miniCalcTargetField.matches('input')
+      ? String(miniCalcTargetField.value || '').trim()
+      : String(miniCalcTargetField.textContent || '').replace(/,/g,'').trim();
+    const n=Number(raw);
+    display.value = raw !== '' && Number.isFinite(n) ? String(n) : '0';
+  }
+  requestAnimationFrame(()=>display.focus({preventScroll:true}));
+}
+
+function miniCalcClose(){
+  const panel=$('miniCalculator');
+  if(panel) panel.hidden=true;
+}
+
+function miniCalcNormalizeExpression(text){
+  return String(text||'')
+    .replace(/×/g,'*')
+    .replace(/÷/g,'/')
+    .replace(/−/g,'-')
+    .replace(/,/g,'')
+    .trim();
+}
+
+function miniCalcEvaluate(){
+  const display=$('miniCalcDisplay');
+  let expr=miniCalcNormalizeExpression(display.value);
+  if(!expr) return null;
+  if(!/^[0-9+\-*/().\s]+$/.test(expr)){
+    display.value='錯誤';
+    miniCalcJustEvaluated=true;
+    return null;
+  }
+  try{
+    const value = Function('"use strict";return ('+expr+')')();
+    if(typeof value!=='number' || !Number.isFinite(value)) throw new Error('bad result');
+    const rounded = Math.round((value + Number.EPSILON) * 100000000) / 100000000;
+    display.value=String(rounded);
+    miniCalcJustEvaluated=true;
+    return rounded;
+  }catch(err){
+    display.value='錯誤';
+    miniCalcJustEvaluated=true;
+    return null;
+  }
+}
+
+function miniCalcAppend(value){
+  const display=$('miniCalcDisplay');
+  if(!display) return;
+  if(display.value==='錯誤') display.value='';
+  const isOperator=/^[+\-*/]$/.test(value);
+  if(miniCalcJustEvaluated && !isOperator) display.value='';
+  miniCalcJustEvaluated=false;
+  if(display.value==='0' && /^[0-9.]$/.test(value)){
+    display.value = value==='.' ? '0.' : value;
+  }else{
+    display.value += value;
+  }
+}
+
+function miniCalcPercent(){
+  const display=$('miniCalcDisplay');
+  const val=miniCalcEvaluate();
+  if(val===null) return;
+  display.value=String(Math.round((val/100 + Number.EPSILON)*100000000)/100000000);
+  miniCalcJustEvaluated=true;
+}
+
+function miniCalcToggleSign(){
+  const display=$('miniCalcDisplay');
+  const val=miniCalcEvaluate();
+  if(val===null) return;
+  display.value=String(-val);
+  miniCalcJustEvaluated=true;
+}
+
+async function miniCalcCopy(){
+  let val=miniCalcEvaluate();
+  if(val===null) return;
+
+  if(Object.is(val,-0)) val=0;
+  const text=String(val);
+
+  // 記住結果：下一個點選的數字欄位會自動貼入
+  miniCalcPendingPasteValue=text;
+
+  let copied=false;
+
+  if(navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+    try{
+      await navigator.clipboard.writeText(text);
+      copied=true;
+    }catch(err){
+      console.warn('Clipboard API 複製失敗，改用備援方式：',err);
+    }
+  }
+
+  if(!copied){
+    const ta=document.createElement('textarea');
+    ta.value=text;
+    ta.setAttribute('readonly','');
+    ta.style.position='fixed';
+    ta.style.left='-9999px';
+    ta.style.top='0';
+    ta.style.opacity='0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0,ta.value.length);
+
+    try{
+      copied=document.execCommand('copy');
+    }catch(err){
+      copied=false;
+      console.warn('備援複製失敗：',err);
+    }finally{
+      ta.remove();
+    }
+  }
+
+  const targetText=$('miniCalcTarget');
+  if(targetText){
+    targetText.textContent='已複製 '+text+'，請點選要貼入的數字欄位';
+  }
+
+  // 複製完成後自動隱藏計算機。
+  // 待貼入的數值仍保留，下一個點選的數字欄位會自動帶入。
+  const panel=$('miniCalculator');
+  if(panel){
+    panel.hidden=true;
+  }
+}
+
+function isMiniCalcPasteTarget(el){
+  if(!el || el.disabled || el.readOnly) return false;
+  if(el.closest && el.closest('#miniCalculator')) return false;
+
+  if(el.tagName==='INPUT'){
+    const type=(el.type||'text').toLowerCase();
+    if(['number','text','tel'].includes(type)) return true;
+
+    const inputMode=String(el.getAttribute('inputmode')||'').toLowerCase();
+    if(['numeric','decimal'].includes(inputMode)) return true;
+  }
+
+  return false;
+}
+
+function applyMiniCalcPendingValue(el){
+  if(miniCalcPendingPasteValue===null) return false;
+  if(!isMiniCalcPasteTarget(el)) return false;
+
+  const value=String(miniCalcPendingPasteValue);
+  el.value=value;
+
+  // 觸發既有金額計算、驗證與畫面更新
+  el.dispatchEvent(new Event('input',{bubbles:true}));
+  el.dispatchEvent(new Event('change',{bubbles:true}));
+
+  miniCalcPendingPasteValue=null;
+  miniCalcTargetField=el;
+
+  const targetText=$('miniCalcTarget');
+  if(targetText){
+    targetText.textContent='已貼入：'+miniCalcTargetName(el)+' = '+value;
+    clearTimeout(window.__miniCalcAutoPasteTimer);
+    window.__miniCalcAutoPasteTimer=setTimeout(()=>{
+      if(targetText){
+        targetText.textContent='目前欄位：'+miniCalcTargetName(el);
+      }
+    },1600);
+  }
+
+  try{
+    el.focus({preventScroll:true});
+    if(typeof el.select==='function') el.select();
+  }catch(err){}
+
+  return true;
+}
+
+// 使用 pointerdown，確保手機點下欄位時立即貼入。
+// capture=true 可在原欄位 click/focus handler 前完成設定。
+document.addEventListener('pointerdown',function(e){
+  if(miniCalcPendingPasteValue===null) return;
+
+  const el=e.target && e.target.closest
+    ? e.target.closest('input')
+    : null;
+
+  if(!el) return;
+  applyMiniCalcPendingValue(el);
+},true);
+
+// 鍵盤 Tab 進入欄位時同樣可自動貼入。
+document.addEventListener('focusin',function(e){
+  if(miniCalcPendingPasteValue===null) return;
+  applyMiniCalcPendingValue(e.target);
+},true);
+
+
+$('miniCalculatorBtn').addEventListener('click', miniCalcOpen);
+$('miniCalcClose').addEventListener('click', miniCalcClose);
+$('miniCalcPaste').addEventListener('click', miniCalcCopy);
+
+$('miniCalcKeys').addEventListener('click', e=>{
+  const btn=e.target.closest('button');
+  if(!btn) return;
+  const value=btn.dataset.value;
+  const action=btn.dataset.action;
+  if(value!==undefined){ miniCalcAppend(value); return; }
+  if(action==='clear'){
+    $('miniCalcDisplay').value='0';
+    miniCalcJustEvaluated=false;
+  }else if(action==='backspace'){
+    const d=$('miniCalcDisplay');
+    d.value=(d.value==='錯誤' || d.value.length<=1) ? '0' : d.value.slice(0,-1);
+    miniCalcJustEvaluated=false;
+  }else if(action==='percent'){
+    miniCalcPercent();
+  }else if(action==='sign'){
+    miniCalcToggleSign();
+  }else if(action==='equals'){
+    miniCalcEvaluate();
+  }
+});
+
+$('miniCalcDisplay').addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    e.preventDefault();
+    miniCalcEvaluate();
+  }else if(e.key==='Escape'){
+    e.preventDefault();
+    miniCalcClose();
+  }
+});
+
+// 拖曳標題列移動；取消所有邊界限制，可自由拖到操作介面與螢幕可視範圍之外。
+(function initMiniCalcDrag(){
+  const panel=$('miniCalculator');
+  const head=$('miniCalcHead');
+  if(!panel || !head) return;
+  let drag=null;
+
+  head.addEventListener('pointerdown', e=>{
+    if(e.target.closest('button')) return;
+    const rect=panel.getBoundingClientRect();
+    panel.style.transform='none';
+    panel.style.left=rect.left+'px';
+    panel.style.top=rect.top+'px';
+    drag={
+      pointerId:e.pointerId,
+      dx:e.clientX-rect.left,
+      dy:e.clientY-rect.top
+    };
+    head.classList.add('dragging');
+    try{ head.setPointerCapture(e.pointerId); }catch(err){}
+    e.preventDefault();
+  });
+
+  head.addEventListener('pointermove', e=>{
+    if(!drag || e.pointerId!==drag.pointerId) return;
+    panel.style.left=(e.clientX-drag.dx)+'px';
+    panel.style.top=(e.clientY-drag.dy)+'px';
+    e.preventDefault();
+  });
+
+  function endDrag(e){
+    if(!drag || e.pointerId!==drag.pointerId) return;
+    drag=null;
+    head.classList.remove('dragging');
+    try{ head.releasePointerCapture(e.pointerId); }catch(err){}
+  }
+  head.addEventListener('pointerup',endDrag);
+  head.addEventListener('pointercancel',endDrag);
+})();
 
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxecNe09UzArp9x1k6-dHdz3w1pYploneSoAN3wvMsLHtz4Fqud0Vhr-060_B9e3BU/exec';
 // 固定使用目前部署的 Apps Script；覆蓋手機瀏覽器曾儲存的舊網址
