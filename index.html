@@ -207,7 +207,7 @@ h1{font-size:24px;margin:0}
   margin:16px 0 4px;
   backdrop-filter:none;
 }
-.bottom-inner{max-width:none;width:100%;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bottom-inner{max-width:none;width:100%;margin:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .bottom .btn{height:52px;font-size:17px}
 #detailDialog,#modeDialog{
   border:0;border-radius:20px;padding:0;max-width:680px;width:calc(100% - 24px);
@@ -577,6 +577,8 @@ h1{font-size:24px;margin:0}
           <input id="cashDiscount" type="number" inputmode="decimal" value="0" aria-label="現金折扣金額">
         </div>
       </div>
+      <div class="field"><label>現金收入</label><input id="cashIn" type="number" inputmode="decimal" value="0"></div>
+      <div class="field"><label>支票總計</label><input id="checkTotal" type="number" inputmode="decimal" value="0"></div>
     </div>
     
   </section>
@@ -593,14 +595,10 @@ h1{font-size:24px;margin:0}
 
   <section class="card">
     <h2>收款資料</h2>
-    <div class="grid">
-      <div class="field"><label>現金收入</label><input id="cashIn" type="number" inputmode="decimal" value="0"></div>
-      <div class="field"><label>支票總計</label><input id="checkTotal" type="number" value="0" readonly></div>
-    </div>
 
     <div id="checks"></div>
-    <button class="btn soft" id="addCheck" type="button" style="width:100%;margin-top:12px">＋ 新增支票／拍照辨識</button>
-    <p class="tip">支票辨識已升級為多階段 OCR：影像放大、灰階與高對比、銳化、二值化，以及整張／金額區／票號日期區分區辨識。可自動嘗試辨識金額、支票號碼、日期與銀行。拍攝時請讓支票填滿畫面、正面平拍、避免反光與陰影；辨識後仍請人工核對。</p>
+    <button class="btn soft" id="addCheck" type="button" style="width:100%;margin-top:12px">＋ 新增支票／拍照</button>
+    <p class="tip">支票照片會保留在本次收帳資料中，按「上傳」時一併上傳至 Google Drive。</p>
   </section>
 
   <section class="card">
@@ -660,9 +658,8 @@ h1{font-size:24px;margin:0}
   <div class="bottom">
     <div class="bottom-inner">
       <button class="btn gray" id="detailBtn" type="button">檢視明細</button>
-      <button class="btn gray" id="receiptBtn" type="button">收款單</button>
       <button class="btn primary" id="calcBtn" type="button">計算</button>
-      <button class="btn soft" id="uploadSheetBtn" type="button">上傳本次收帳資料</button>
+      <button class="btn soft" id="uploadSheetBtn" type="button">上傳</button>
     </div>
   </div>
 </div>
@@ -822,8 +819,7 @@ function calc(){
 }
 
 function refreshCheckTotal(){
-  const total=[...document.querySelectorAll('.check-amt')].reduce((s,e)=>s+Number(e.value||0),0);
-  $('checkTotal').value=total.toFixed(2).replace(/\.00$/,'');
+  // 支票總計改為手動輸入，不再由個別支票明細自動加總。
   calc();
   if(typeof updateReceipt === 'function' && !receiptManualMode) updateReceipt();
 }
@@ -1145,52 +1141,38 @@ function addCheck(){
       </div>
     </div>
     <img class="preview" alt="支票預覽">
-    <div class="ocr-status"></div>
-    <div class="ocr-tools">
-      <button type="button" class="btn gray rerun-ocr">重新強化辨識</button>
-      <button type="button" class="btn gray show-ocr">查看辨識文字</button>
-    </div>
-    <div class="ocr-result-box"></div>
-    <div class="check-grid">
-      <input class="check-no" placeholder="支票號碼（自動辨識／可修改）">
-      <input class="check-bank" placeholder="銀行（自動辨識／可修改）">
-      <input class="check-date" type="date" aria-label="到期日">
-      <input class="check-amt" type="number" inputmode="decimal" placeholder="支票金額">
-    </div>
+    <div class="photo-upload-status" style="font-size:12px;color:var(--muted);margin-top:7px"></div>
   `;
   $('checks').appendChild(wrap);
-  setTimeout(enableAutoClearZero,0);
   const fileInput=wrap.querySelector('.photo-input');
   const preview=wrap.querySelector('.preview');
-  const status=wrap.querySelector('.ocr-status');
-  const amount=wrap.querySelector('.check-amt');
+  const status=wrap.querySelector('.photo-upload-status');
 
-  wrap.querySelector('.remove-check').onclick=()=>{wrap.remove();refreshCheckTotal()};
-  amount.addEventListener('input',refreshCheckTotal);
-
-  let currentChequeFile=null;
+  wrap.querySelector('.remove-check').onclick=()=>{
+    wrap.remove();
+    refreshCheckTotal();
+  };
 
   fileInput.addEventListener('change', async ()=>{
     const file=fileInput.files && fileInput.files[0];
     if(!file) return;
-    currentChequeFile=file;
-    await runChequeOCR(file,wrap);
-  });
-
-  wrap.querySelector('.rerun-ocr').onclick=async ()=>{
-    if(!currentChequeFile){
-      status.textContent='請先拍攝或選擇一張支票照片。';
-      return;
+    status.textContent='正在處理支票照片…';
+    try{
+      const img=await fileToImage(file);
+      const photoData=makeUploadPhoto(img);
+      wrap.dataset.photoData=photoData;
+      wrap.dataset.photoName=file.name || ('cheque_' + Date.now() + '.jpg');
+      wrap.dataset.ocrText='';
+      preview.src=photoData;
+      preview.style.display='block';
+      status.textContent='支票照片已準備完成，按「上傳」時會一併上傳。';
+    }catch(err){
+      status.textContent='照片處理失敗：'+(err && err.message ? err.message : err);
+    }finally{
+      fileInput.value='';
     }
-    await runChequeOCR(currentChequeFile,wrap);
-  };
-
-  wrap.querySelector('.show-ocr').onclick=()=>{
-    const box=wrap.querySelector('.ocr-result-box');
-    box.style.display=box.style.display==='block'?'none':'block';
-  };
+  });
 }
-
 
 function esc(s){
   return String(s ?? '').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;' }[m]));
@@ -1231,19 +1213,10 @@ function updateReceipt(){
     ['現金折扣' + (selectedRate() ? ' ' + selectedRate() + '%' : ''), num('cashDiscount')]
   ];
 
-  const checks = [...document.querySelectorAll('.check-row')].map((row,i)=>{
-    const date = row.querySelector('.check-date').value || '';
-    let yy='',mm='',dd='';
-    if(date){ [yy,mm,dd]=date.split('-'); }
-    return {
-      y: yy, m: mm ? Number(mm) : '', d: dd ? Number(dd) : '',
-      amount:Number(row.querySelector('.check-amt').value||0),
-      no:row.querySelector('.check-no').value||'',
-      bank:row.querySelector('.check-bank').value||''
-    };
-  });
+  // 個別支票資料欄位已移除；收款單僅保留手動輸入的支票總計。
+  const checks = [];
 
-  const maxRows = Math.max(items.length, checks.length, 9);
+  const maxRows = Math.max(items.length, 9);
   let body = '';
   for(let i=0;i<maxRows;i++){
     const item = items[i];
@@ -2517,11 +2490,11 @@ function getReceiptPayload(){
   const result=calc();
   const checks=[...document.querySelectorAll('.check-row')].map((row,i)=>({
     index:i+1,
-    chequeNo:row.querySelector('.check-no').value||'',
-    bank:row.querySelector('.check-bank').value||'',
-    dueDate:row.querySelector('.check-date').value||'',
-    amount:Number(row.querySelector('.check-amt').value||0),
-    ocrText:row.dataset.ocrText||'',
+    chequeNo:'',
+    bank:'',
+    dueDate:'',
+    amount:0,
+    ocrText:'',
     photoData:row.dataset.photoData||'',
     photoName:row.dataset.photoName||('cheque_'+(i+1)+'.jpg')
   }));
@@ -2645,19 +2618,14 @@ async function uploadReceiptToGoogleSheet(){
     }
   }finally{
     btn.disabled=false;
-    btn.textContent=oldBtnText || '上傳本次收帳資料';
+    btn.textContent=oldBtnText || '上傳';
   }
 }
 
 function showDetail(){
   const r=calc();
   const modeText = selectedRate()===0 ? '正常收帳' : `現金扣 ${selectedRate()}%`;
-  const checks=[...document.querySelectorAll('.check-row')].map((row,i)=>({
-    no:row.querySelector('.check-no').value||'—',
-    bank:row.querySelector('.check-bank').value||'—',
-    date:row.querySelector('.check-date').value||'—',
-    amt:Number(row.querySelector('.check-amt').value||0)
-  }));
+  const chequePhotoCount=[...document.querySelectorAll('.check-row')].filter(row=>row.dataset.photoData).length;
   const rows=[
     ['收款月份',getReceiptSelectedMonth()||'—'],
     ['客戶編號',$('customerCode').value||'—'],
@@ -2670,14 +2638,10 @@ function showDetail(){
     ['現金折扣' + (selectedRate() ? ' ' + selectedRate() + '%' : ''),fmt(num('cashDiscount'))],
     ['其他調整合計',fmt(adjTotal())],['實際應收',fmt(r.actual)],
     ['現金收入',fmt(num('cashIn'))],['支票總計',fmt(num('checkTotal'))],
+    ['支票照片',chequePhotoCount+' 張'],
     ['實收總額',fmt(r.received)],['溢收金額',fmt(r.over)],['尚欠金額',fmt(r.due)]
   ];
-  let html='<table class="detail-table">'+rows.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join('')+'</table>';
-  if(checks.length){
-    html+='<h3 style="font-size:15px;margin:18px 0 8px">支票明細</h3><table class="detail-table">';
-    checks.forEach((c,i)=>html+=`<tr><td>支票 ${i+1}<br><small>${c.bank}｜${c.no}｜${c.date}</small></td><td>${fmt(c.amt)}</td></tr>`);
-    html+='</table>';
-  }
+  const html='<table class="detail-table">'+rows.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td></tr>`).join('')+'</table>';
   $('detailContent').innerHTML=html;
   $('detailDialog').showModal();
 }
@@ -2715,10 +2679,6 @@ document.querySelectorAll('input[type="number"]').forEach(e=>e.addEventListener(
 $('addCheck').onclick=()=>{addCheck(); updateReceipt();};
 $('calcBtn').onclick=()=>{calc();updateReceipt();};
 $('detailBtn').onclick=showDetail;
-$('receiptBtn').onclick=()=>{
-  updateReceipt();
-  $('receiptPrint').scrollIntoView({behavior:'smooth',block:'start'});
-};
 $('refreshReceipt').onclick=()=>{receiptManualMode=false;updateReceipt();};
 $('pdfBtn').onclick=exportReceiptPDF;
 $('uploadSheetBtn').onclick=uploadReceiptToGoogleSheet;
