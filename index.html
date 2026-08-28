@@ -2801,11 +2801,40 @@ function setMiniCalcTarget(el){
   if(targetText) targetText.textContent = '目前欄位：' + miniCalcTargetName(el);
 }
 
+// 點進可輸入的金額／數字欄位時，如果內容只是 0，就自動清空。
+// 若剛從計算機按了「複製」正等待貼入，則不清空，直接交給自動貼入流程。
+function clearZeroOnNumericField(el){
+  if(miniCalcPendingPasteValue!==null) return;
+  if(!miniCalcIsEligibleTarget(el)) return;
+
+  if(el.matches && el.matches('input')){
+    const raw=String(el.value ?? '').trim().replace(/,/g,'');
+    if(raw!=='' && Number(raw)===0){
+      el.value='';
+    }
+    return;
+  }
+
+  if(el.matches && el.matches('.receipt-money[contenteditable="true"]')){
+    const raw=String(el.textContent || '').trim().replace(/,/g,'');
+    if(raw!=='' && Number(raw)===0){
+      el.textContent='';
+    }
+  }
+}
+
 document.addEventListener('focusin', e=>{
-  if(miniCalcIsEligibleTarget(e.target)) setMiniCalcTarget(e.target);
+  if(miniCalcIsEligibleTarget(e.target)){
+    clearZeroOnNumericField(e.target);
+    setMiniCalcTarget(e.target);
+  }
 });
+
 document.addEventListener('pointerdown', e=>{
-  if(miniCalcIsEligibleTarget(e.target)) setMiniCalcTarget(e.target);
+  if(miniCalcIsEligibleTarget(e.target)){
+    clearZeroOnNumericField(e.target);
+    setMiniCalcTarget(e.target);
+  }
 }, true);
 
 function miniCalcOpen(){
