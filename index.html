@@ -127,6 +127,161 @@ h1{font-size:24px;margin:0}
 }
 .customer-month-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #b7445a1b}
 
+.customer-month-multi{position:relative;min-width:0}
+.customer-month-button{
+  width:100%;height:52px;border:1px solid #d9cbca;border-radius:12px;background:#fff;
+  font-size:15px;padding:8px 10px;outline:none;font-weight:700;color:var(--text);
+  text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer
+}
+.customer-month-button:focus{border-color:var(--accent);box-shadow:0 0 0 3px #b7445a1b}
+.customer-month-button .month-button-text{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.customer-month-panel{
+  display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:9999;
+  max-height:300px;overflow:auto;background:#fff;border:1px solid #ddcfcd;border-radius:12px;
+  box-shadow:0 12px 28px rgba(60,35,40,.16);padding:8px
+}
+.customer-month-panel.open{display:block}
+.receipt-month-option{
+  display:flex;align-items:center;gap:9px;padding:9px 8px;border-radius:9px;
+  font-size:14px;font-weight:700;cursor:pointer
+}
+.receipt-month-option:active,.receipt-month-option:hover{background:#fff4f6}
+.receipt-month-option input{width:20px;height:20px;accent-color:var(--accent)}
+
+.customer-select-panel{padding:8px}
+
+.customer-search-combo{
+  position:relative;
+  width:100%;
+  min-width:0;
+}
+.customer-search-main-input{
+  width:100%;
+  height:52px;
+  padding:8px 42px 8px 11px!important;
+  border:1px solid #d9cbca!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  font-size:16px!important;
+  font-weight:700;
+  color:var(--text);
+  outline:none;
+}
+.customer-search-main-input:focus{
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 3px #b7445a1b;
+}
+.customer-search-toggle{
+  position:absolute;
+  right:5px;
+  top:50%;
+  transform:translateY(-50%);
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#6b5257;
+  font-size:18px;
+  cursor:pointer;
+  padding:0;
+}
+.customer-search-toggle:active{background:#f5e9eb}
+.customer-selected-count{
+  position:sticky;
+  top:-8px;
+  z-index:3;
+  background:#fff;
+  padding:5px 7px 8px;
+  margin-bottom:3px;
+  border-bottom:1px solid #eee3e5;
+  color:#8d2d41;
+  font-size:13px;
+  font-weight:800;
+}
+.customer-panel-search{
+  position:sticky;
+  top:-8px;
+  z-index:2;
+  background:#fff;
+  padding:2px 0 8px;
+}
+.customer-panel-search .customer-search-input{
+  width:100%;
+  min-height:44px;
+  height:44px;
+  border:1px solid #d9cbca;
+  border-radius:10px;
+  padding:8px 10px;
+  font-size:16px;
+  background:#fff;
+}
+.customer-checkbox-list{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.receipt-customer-option{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 8px;
+  border-radius:9px;
+  cursor:pointer;
+  min-width:0;
+}
+.receipt-customer-option:hover,
+.receipt-customer-option:active{background:#fff4f6}
+.receipt-customer-option input{
+  flex:0 0 auto;
+  width:20px;
+  height:20px;
+  accent-color:var(--accent);
+}
+.receipt-customer-option .customer-option-text{
+  min-width:0;
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+  font-size:14px;
+  line-height:1.35;
+}
+.receipt-customer-option .customer-option-code{
+  color:#8d2d41;
+  font-weight:900;
+}
+.receipt-customer-option .customer-option-name{
+  color:var(--text);
+  font-weight:700;
+}
+.customer-checkbox-empty{
+  padding:12px 8px;
+  color:var(--muted);
+  font-size:13px;
+}
+.selected-customer-chips{
+  display:flex;flex-wrap:wrap;gap:7px;margin-top:9px
+}
+.selected-customer-chip{
+  display:inline-flex;align-items:center;gap:6px;max-width:100%;
+  border:1px solid #d9aeb7;background:#fff4f6;color:#7d293b;border-radius:999px;
+  padding:6px 9px 6px 11px;font-size:13px;font-weight:800
+}
+.selected-customer-chip span{
+  min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.selected-customer-chip button{
+  width:24px;height:24px;min-width:24px;border:0;border-radius:50%;
+  background:#ead8dc;color:#7d293b;font-size:16px;line-height:1;cursor:pointer;padding:0
+}
+.customer-search-item.is-selected{background:#fff0f3}
+.customer-search-item.is-selected::after{
+  content:'✓';margin-left:auto;color:#8d2d41;font-weight:900
+}
+
 .customer-search-results{
   display:none;
   position:relative;
@@ -256,7 +411,10 @@ h1{font-size:24px;margin:0}
   #receiptPrint{position:absolute;left:0;top:0;width:100%;padding:0;margin:0;border:0}
 }
 @media(max-width:520px){
-  .bottom-inner{grid-template-columns:1fr 1fr}
+  .bottom-inner{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px
+  }
   .app{padding-left:10px;padding-right:10px}
   .card{padding:13px;border-radius:16px}
   .field label{font-size:13px}
@@ -296,6 +454,69 @@ h1{font-size:24px;margin:0}
   .ar-main-toolbar .customer-search-wrap{
     grid-column:1/-1;
   }
+}
+
+
+@media(max-width:520px){
+  .bottom .btn{
+    min-width:0;
+    width:100%;
+    font-size:15px;
+    padding-left:4px;
+    padding-right:4px;
+    white-space:nowrap;
+  }
+}
+@media(max-width:360px){
+  .bottom-inner{gap:4px}
+  .bottom .btn{
+    font-size:14px;
+    padding-left:2px;
+    padding-right:2px;
+  }
+}
+
+/* ===== 客戶搜尋下拉層：固定顯示在最上層 ===== */
+#customerSearchCard{
+  position:relative;
+  z-index:50000 !important;
+  overflow:visible !important;
+  isolation:auto !important;
+}
+
+#customerSearchCard .ar-main-toolbar{
+  position:relative;
+  z-index:50010 !important;
+  overflow:visible !important;
+}
+
+#receiptCustomerMulti{
+  position:relative;
+  z-index:50020 !important;
+  overflow:visible !important;
+}
+
+#receiptCustomerPanel{
+  z-index:60000 !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  box-shadow:0 16px 38px rgba(50,25,30,.28) !important;
+}
+
+#receiptMonthMulti{
+  position:relative;
+  z-index:50015 !important;
+  overflow:visible !important;
+}
+
+#receiptMonthPanel{
+  z-index:59000 !important;
+}
+
+/* 後續卡片保持較低層級，避免 backdrop-filter 形成的 stacking context 蓋住搜尋結果 */
+#customerSearchCard ~ .card{
+  position:relative;
+  z-index:1;
 }
 
 </style>
@@ -544,14 +765,32 @@ h1{font-size:24px;margin:0}
   <section class="card" id="customerSearchCard">
     <h2>客戶查詢</h2>
     <div class="ar-toolbar ar-main-toolbar">
-      <div class="customer-search-wrap">
-        <input id="customerSearchInput" class="customer-search-input" type="search"
-               autocomplete="off" placeholder="輸入客戶編號或客戶簡稱">
+      <div class="customer-month-multi customer-multi" id="receiptCustomerMulti">
+        <div class="customer-search-combo">
+          <input id="customerSearchInput"
+                 class="customer-search-input customer-search-main-input"
+                 type="search"
+                 autocomplete="off"
+                 placeholder="選擇客戶／輸入關鍵字搜尋"
+                 aria-haspopup="true"
+                 aria-expanded="false">
+          <button id="receiptCustomerToggle" class="customer-search-toggle" type="button"
+                  aria-label="展開客戶複選清單" title="展開客戶複選清單">⌄</button>
+        </div>
+        <div id="receiptCustomerPanel" class="customer-month-panel customer-select-panel">
+          <div id="customerSelectedCount" class="customer-selected-count">已選 0 家</div>
+          <div id="customerSearchResults" class="customer-checkbox-list"></div>
+        </div>
       </div>
-      <select id="receiptMonthSelect" class="customer-month-select" aria-label="收款月份"></select>
+      <div class="customer-month-multi" id="receiptMonthMulti">
+        <button id="receiptMonthButton" class="customer-month-button" type="button" aria-haspopup="true" aria-expanded="false">
+          <span class="month-button-text">選擇月份</span><span>⌄</span>
+        </button>
+        <div id="receiptMonthPanel" class="customer-month-panel"></div>
+        <select id="receiptMonthSelect" multiple hidden aria-label="收款月份"></select>
+      </div>
       <button class="btn soft" id="modeSelectBtn" type="button">正常收帳　⌄</button>
     </div>
-    <div id="customerSearchResults" class="customer-search-results"></div>
     <div class="money-note" id="customerDataStatus">
       已內建客戶資料，可直接用客戶編號或客戶簡稱關鍵字查詢。
     </div>
@@ -1241,8 +1480,11 @@ function updateReceipt(){
   $('rpDue').textContent = fmt(r.due);
 
   const modeText = selectedRate()===0 ? '正常收帳' : `現金扣 ${selectedRate()}%`;
-  const selectedMonth=getReceiptSelectedMonth();
-  const monthText=selectedMonth ? selectedMonth.replace('-', '年')+'月' : '';
+  const selectedMonths=getReceiptSelectedMonths();
+  const monthText=selectedMonths.map(v=>{
+    const [y,m]=v.split('-');
+    return `${y}年${Number(m)}月`;
+  }).join('、');
   const memoParts = [
     `收帳方式：${modeText}`,
     monthText ? `收款月份：${monthText}` : '',
@@ -2315,8 +2557,10 @@ function applySelectedAr(){
   // 合併客戶編號與客戶名稱
   const customerCodeMap=getSelectedCustomerCodes();
   const selectedCodes=customers.map(c=>customerCodeMap[c]).filter(Boolean);
-  $('customerCode').value=selectedCodes.join('、');
-  $('customer').value=customers.join('、');
+  setReceiptCustomers(customers.map((name,i)=>({
+    name:name,
+    code:customerCodeMap[name]||''
+  })));
 
   // 合併多家/多月份金額
   $('currentAR').value=(s.pretax||0).toFixed(2).replace(/\.00$/,'');
@@ -2328,6 +2572,7 @@ function applySelectedAr(){
   $('prevOver').value=(totalPrepayment||0).toFixed(2).replace(/\.00$/,'');
 
   const selectedMonths=[...document.querySelectorAll('#arMonthList input:checked')].map(x=>x.value);
+  setReceiptSelectedMonths(selectedMonths,true);
 
   // 將每家客戶的金額摘要寫入備註
   const customerSummaries=customers.map(c=>{
@@ -2364,7 +2609,12 @@ function applySelectedAr(){
 const CUSTOMER_MASTER = [{"code":"B2","name":"新 北 市"},{"code":"B010","name":"大榮"},{"code":"B018","name":"勝力冷氣零件企業有限公司"},{"code":"B019","name":"甘森利"},{"code":"B020","name":"信林"},{"code":"B021","name":"亞成"},{"code":"B022","name":"客戶-現金"},{"code":"B023","name":"金登"},{"code":"B026","name":"泰逸"},{"code":"B027","name":"達億"},{"code":"B028","name":"亞成-江-泰"},{"code":"B029","name":"EMAS"},{"code":"B030","name":"S.SON(登)"},{"code":"B0301","name":"邦德"},{"code":"B02801","name":"必勝"},{"code":"B02802","name":"泓信"},{"code":"B03301","name":"泰源"},{"code":"B03302","name":"乾一"},{"code":"B03303","name":"XXX 琮賀"},{"code":"B03304","name":"瓏沅(茂品)"},{"code":"B03305","name":"X 鑫昌"},{"code":"B03306","name":"X 德盛"},{"code":"B03307","name":"世發 (現金)"},{"code":"B03308","name":"台城"},{"code":"B03309","name":"X 大信"},{"code":"B03310","name":"聰興 %"},{"code":"B03310-1","name":"嵩達 %"},{"code":"B03310-2","name":"振盛 %"},{"code":"B03311","name":"X 源聯"},{"code":"B03312","name":"X 東平和"},{"code":"B03313","name":"三福"},{"code":"B03313-1","name":"鄭萬全"},{"code":"B03314","name":"X. 龍琦-B"},{"code":"B03315","name":"*瑞鎰(育昌)"},{"code":"B03316","name":"勝焱"},{"code":"B03317","name":"X 旭成"},{"code":"B03318","name":"X. 阡暉(現金帳)"},{"code":"B03319","name":"國豐"},{"code":"B03320","name":"億泰 (現金帳)"},{"code":"B03321","name":"杰鐙"},{"code":"B03322","name":"X. 鼎弘 VO"},{"code":"B03323","name":"X. 鉅東"},{"code":"B03324","name":"大慶"},{"code":"B03325","name":"坤俐"},{"code":"B03326","name":"聯聚"},{"code":"B03327","name":"X. 一升隆"},{"code":"B03328","name":"駿譯 %"},{"code":"B03401","name":"旭誠"},{"code":"B03402","name":"廣達"},{"code":"B03403","name":"X. 嶸達-TO"},{"code":"B03404","name":"中崴"},{"code":"B03405","name":"X. 萬祥-D"},{"code":"B03406","name":"裕隆-壢"},{"code":"B03407","name":"方泉谷"},{"code":"B03408","name":"安泰-桃"},{"code":"B03409","name":"大千 %"},{"code":"B03410","name":"X. 昇達-B"},{"code":"B03411","name":"鴻億-D 1%"},{"code":"B03412","name":"XX龍潭-本店(暫不出貨)"},{"code":"B03413","name":"筌曜"},{"code":"B03414","name":"X. 龍潭(瑞豐)-楊梅"},{"code":"B03415","name":"宏盛(晨龍)"},{"code":"B03416","name":"云豐"},{"code":"B03417","name":"**永隆(鈑材) 現金"},{"code":"B03418","name":"鋐銘"},{"code":"B03419","name":"長億"},{"code":"B03420","name":"大勝"},{"code":"B03420-1","name":"創勝"},{"code":"B03421","name":"昇陽"},{"code":"B03451","name":"X. 揚東"},{"code":"B03452","name":"永彰"},{"code":"B03501","name":"台興(盛春)"},{"code":"B03502","name":"台典"},{"code":"B03503","name":"中元-新竹"},{"code":"B03504","name":"左倫"},{"code":"B03505","name":"X 萬記"},{"code":"B03506","name":"X 廣泰"},{"code":"B03507","name":"聯証"},{"code":"B03508","name":"X**宏新-B"},{"code":"B03510","name":"旭記"},{"code":"B03511","name":"X 旭榮"},{"code":"B03512","name":"勝杰 %"},{"code":"B03513","name":"X 上鼎"},{"code":"B03514","name":"X 神光"},{"code":"B03515","name":"順益-W"},{"code":"B03516","name":"X. 遠昇"},{"code":"B03517","name":"上輝煌行"},{"code":"B03518","name":"東榮"},{"code":"B03519","name":"進昇"},{"code":"B03702","name":"宏全-B"},{"code":"B03703","name":"XX山晨"},{"code":"B03704","name":"X 竹康"},{"code":"B03705","name":"中元-頭份"},{"code":"B03706","name":"基誠 %"},{"code":"B03707","name":"聯盛"},{"code":"B03707-1","name":"聯辰"},{"code":"B03708","name":"順泰 %"},{"code":"B03709","name":"昌樺 %"},{"code":"B03710","name":"X 金享"},{"code":"B03711","name":"萬泰 %"},{"code":"B03712","name":"X 豐盛"},{"code":"B03713","name":"昌勝"},{"code":"B03714","name":"光一(現金)"},{"code":"B03801","name":"立得 %"},{"code":"B03802","name":"東昇-花"},{"code":"B03803","name":"日新"},{"code":"B03804","name":"新光"},{"code":"B03806","name":"奇昌"},{"code":"B03807","name":"合億"},{"code":"B03808","name":"東隆"},{"code":"B03808-1","name":"東隆-玉里"},{"code":"B03809","name":"新協昌"},{"code":"B03810","name":"薪峰"},{"code":"B03901","name":"X. 成豐-宜 (現金)"},{"code":"B03903","name":"X 璟泰"},{"code":"B03906","name":"X 詠新"},{"code":"B03907","name":"勁勇(木水)"},{"code":"B03910","name":"奇億"},{"code":"B03910-1","name":"賴奕成"},{"code":"B03911","name":"新捷"},{"code":"B03912","name":"X. 東暉-宜"},{"code":"B03913","name":"盈仁"},{"code":"B03921","name":"國豐 %"},{"code":"B03922","name":"萬宜(正發)"},{"code":"B03923","name":"X 英信-B"},{"code":"B03926","name":"X. 利榮行"},{"code":"B03927","name":"X. 茂盛 %"},{"code":"B03928","name":"X. 金山"},{"code":"B04201","name":"X 永協興"},{"code":"B04202","name":"X. 善品 KR"},{"code":"B04203","name":"X 大欣"},{"code":"B04204","name":"X. 聯欣"},{"code":"B04205","name":"X. 綜益 T"},{"code":"B04206","name":"X**瑞豐"},{"code":"B04207","name":"X. 盛富(台中店)"},{"code":"B04208","name":"X**嘉亞"},{"code":"B04209-1","name":"順隆-東 %"},{"code":"B04209-2","name":"順大-西"},{"code":"B04209-3","name":"全宏 %"},{"code":"B04209-4","name":"X. 祥宏"},{"code":"B04210","name":"X. 三六"},{"code":"B04211","name":"昱軒"},{"code":"B04213","name":"**聯通(貨款請勿折)"},{"code":"B04214","name":"X**儀豐"},{"code":"B04215","name":"協和 %"},{"code":"B04216","name":"X 正大"},{"code":"B04220","name":"X. 儀興"},{"code":"B04221","name":"威興"},{"code":"B04222","name":"機億 (忠孝)"},{"code":"B04223","name":"X**順阮"},{"code":"B04224","name":"X**駿百"},{"code":"B04225","name":"X**超峰"},{"code":"B04226","name":"X**冠軒"},{"code":"B04227","name":"健業 %"},{"code":"B04228","name":"X**辰美璟"},{"code":"B04229","name":"X**三統"},{"code":"B04230","name":"勝陽"},{"code":"B04231","name":"X**鴻銓"},{"code":"B04232","name":"X**成豐-中"},{"code":"B04233","name":"旭興"},{"code":"B04234","name":"X**聯昇"},{"code":"B04235","name":"X**光華"},{"code":"B04236","name":"X. 順堯"},{"code":"B04237","name":"X. 信億"},{"code":"B04238","name":"X**聯禾-中"},{"code":"B04239","name":"X**鉅詮"},{"code":"B04240","name":"泰昌(久昌)"},{"code":"B04241","name":"X**東貿 B"},{"code":"B04242","name":"X. 金泰興"},{"code":"B04243","name":"X**鉅豐"},{"code":"B04244","name":"X. 邰利"},{"code":"B04246","name":"X**杰特 VO"},{"code":"B04247","name":"全一"},{"code":"B04248","name":"X. 佳揚行"},{"code":"B04249","name":"吉昌行"},{"code":"B04250","name":"X. 世紀"},{"code":"B04251","name":"鴻毅-大里"},{"code":"B04252","name":"X. 易修"},{"code":"B04253","name":"士喜菖 %"},{"code":"B04253-1","name":"士喜菖 (高雄) %"},{"code":"B04401","name":"X. 亞富 %"},{"code":"B04402","name":"X**鴻宜"},{"code":"B04403","name":"X**盛榮"},{"code":"B04405","name":"X. 全興"},{"code":"B04422","name":"X. 承烜"},{"code":"B04501","name":"吉祥 %"},{"code":"B04502","name":"X**全益"},{"code":"B04503","name":"X**東億"},{"code":"B04504","name":"X**合盛"},{"code":"B04505","name":"X. 盈豐"},{"code":"B04506","name":"威隆"},{"code":"B04507","name":"X. 濠興"},{"code":"B04508","name":"X**明鑫"},{"code":"B04509","name":"三源行"},{"code":"B04510","name":"上福"},{"code":"B04601","name":"清水旭展 %"},{"code":"B04601-1","name":"大甲旭展"},{"code":"B04602","name":"X**德興"},{"code":"B04603","name":"X**台甲"},{"code":"B04604","name":"上和"},{"code":"B04605","name":"松興"},{"code":"B04606","name":"X**佳興 B"},{"code":"B04607","name":"X**菖億"},{"code":"B04608","name":"鑫鼎元"},{"code":"B04701","name":"X**聯和"},{"code":"B04702","name":"X. 勝富 B"},{"code":"B04703","name":"海慶"},{"code":"B04704","name":"信佳 %"},{"code":"B04705","name":"杰新 VO"},{"code":"B04706","name":"X. 泰和"},{"code":"B04707","name":"X**全峰"},{"code":"B04708","name":"X. 緯達"},{"code":"B04709","name":"X**翔在 B"},{"code":"B04710","name":"鴻毅-彰化(丰禾)"},{"code":"B04801","name":"迅達-員林 %"},{"code":"B04802","name":"X**富山"},{"code":"B04803","name":"X**莒光"},{"code":"B04804","name":"美樂(達美) %"},{"code":"B04805","name":"旭新-埔心店"},{"code":"B04805-1","name":"旭新-二林店"},{"code":"B04806","name":"建豐"},{"code":"B04807","name":"振亞(信坤)"},{"code":"B04808","name":"X. 今晨 R"},{"code":"B04809","name":"X. 勝富 B"},{"code":"B04810","name":"源順 %"},{"code":"B04811","name":"鴻毅-鹿港"},{"code":"B04812","name":"鴻毅-北斗"},{"code":"B04813","name":"益新"},{"code":"B04850","name":"啟益(員林) %"},{"code":"B04850-1","name":"啟益(溪湖) %"},{"code":"B04901","name":"欣旭德"},{"code":"B04901-1","name":"旭德-南屯店 2%"},{"code":"B04901-2","name":"旭德-北屯店 2%"},{"code":"B04901-3","name":"旭德-西屯店 2%"},{"code":"B04901-4","name":"旭德-東區 2%"},{"code":"B04901-5","name":"泰霖-(總店) 2%"},{"code":"B04902","name":"瑋晟(立諱)"},{"code":"B04903","name":"X**東埔"},{"code":"B04904","name":"X. 協建行"},{"code":"B04905","name":"鴻毅-草屯 %"},{"code":"B04905-1","name":"鴻毅-南投"},{"code":"B05201","name":"保昌"},{"code":"B05202","name":"協建成"},{"code":"B05203","name":"X**佳成"},{"code":"B05204","name":"X**理想"},{"code":"B05205","name":"泊逵(展榮) %-站止"},{"code":"B05206","name":"上禾"},{"code":"B05207","name":"東銧"},{"code":"B05208","name":"X. 捷盈 (暫不出貨-許102.05.15)"},{"code":"B05209","name":"X. 三億"},{"code":"B05210","name":"三和 %"},{"code":"B05211","name":"吳奇達(原東昌) %"},{"code":"B05212","name":"X. 沅貿 B"},{"code":"B05213","name":"*永泰"},{"code":"B05214","name":"X. 南昌"},{"code":"B05215","name":"欣美(欣昌-朴子)"},{"code":"B05216","name":"雙鏘實業"},{"code":"B05250","name":"嘉義"},{"code":"B05501","name":"X**瑞和"},{"code":"B05502","name":"全泰 %"},{"code":"B05503","name":"*仁億"},{"code":"B05504","name":"瑞發-北港 %"},{"code":"B05505","name":"瑞興-虎尾 %"},{"code":"B05506","name":"良一"},{"code":"B05507","name":"泓貿 %"},{"code":"B05508","name":"X. 吉成 (不出貨-許105/03/29)"},{"code":"B05601","name":"利昇 %"},{"code":"B05602","name":"X**億春"},{"code":"B05603","name":"全欣"},{"code":"B06201","name":"X**盛智"},{"code":"B06202","name":"健揚"},{"code":"B06203","name":"人人"},{"code":"B06204","name":"X**敏聲"},{"code":"B06205","name":"X.時岱"},{"code":"B06206","name":"亞生"},{"code":"B06207","name":"X.南台揚 B"},{"code":"B06208","name":"X**利原行"},{"code":"B06209","name":"隆發-南"},{"code":"B06210","name":"X**嘉興"},{"code":"B06211","name":"X**金豪勝"},{"code":"B06212","name":"X. 韋德 B"},{"code":"B06213","name":"X. 穩茂 B"},{"code":"B06214","name":"X**四季"},{"code":"B06215","name":"X**唯晟"},{"code":"B06216","name":"X. 彬翰 VO"},{"code":"B06217","name":"富泰"},{"code":"B06218","name":"紳豪/上尚"},{"code":"B06219","name":"福銓"},{"code":"B06220","name":"正成"},{"code":"B06221","name":"鎧嘉"},{"code":"B06222","name":"永裕"},{"code":"B06501","name":"順利 %"},{"code":"B06502","name":"X.啟弘"},{"code":"B06503","name":"華豐-永康 %"},{"code":"B06503-1","name":"華霆-文和店 %"},{"code":"B06503-2","name":"華霆-自強店 %"},{"code":"B06504","name":"欣昌-新營 %"},{"code":"B06504-1","name":"欣昌-佳里 %"},{"code":"B06504-2","name":"欣昌-麻豆 %"},{"code":"B06505","name":"萬在"},{"code":"B06506","name":"保進"},{"code":"B06507","name":"X**全賓"},{"code":"B06508","name":"北高"},{"code":"B06508-1","name":"洪銘城"},{"code":"B06509","name":"祥貞"},{"code":"B06510","name":"X**明宏"},{"code":"B06511","name":"明鋐 %"},{"code":"B06512","name":"X. 皇嘉"},{"code":"B06513","name":"光展"},{"code":"B06514","name":"X. 安中-歸仁 (東達)"},{"code":"B06514-1","name":"(安中)齊洋"},{"code":"B06514-2","name":"X. 安中-佳里"},{"code":"B06515","name":"X**長宏"},{"code":"B06516","name":"X. 金鋐達"},{"code":"B06517","name":"X**吉祥"},{"code":"B06518","name":"X**永成"},{"code":"B06519","name":"荃翔"},{"code":"B06520","name":"凱揚"},{"code":"B06521","name":"X**國盛"},{"code":"B06522","name":"循興 %"},{"code":"B06523","name":"榮聖"},{"code":"B06524","name":"X. 國倫 %"},{"code":"B06525","name":"廣達 %"},{"code":"B06526","name":"鼎新-B"},{"code":"B06527","name":"永錡"},{"code":"B06901","name":"X**有信"},{"code":"B06902","name":"X. 大發"},{"code":"B07001","name":"*光德"},{"code":"B07002","name":"X. 新豐-高"},{"code":"B07003","name":"X**鴻隆"},{"code":"B07004","name":"X**三益"},{"code":"B07005","name":"三美"},{"code":"B07006","name":"X**新三"},{"code":"B07007","name":"X**永峰"},{"code":"B07008","name":"大達(九田)"},{"code":"B07009","name":"原信"},{"code":"B07010","name":"*通利(統利)"},{"code":"B07011","name":"X.弘大 %"},{"code":"B07012","name":"東弘"},{"code":"B07013","name":"X**梧洲"},{"code":"B07014","name":"佑任(宏旭)"},{"code":"B07015","name":"X**宏光"},{"code":"B07016","name":"雙湧 %"},{"code":"B07017","name":"X.禾豐(瑞弘)"},{"code":"B07018","name":"X. 龍暉 B"},{"code":"B07019","name":"盛全-B"},{"code":"B07020","name":"虹溙 (杜誌勇 台星)"},{"code":"B07020-1","name":"虹溙 (杜誌勇 現金價)"},{"code":"B07021","name":"義豐"},{"code":"B07022","name":"協展"},{"code":"B07023","name":"順吉"},{"code":"B07024","name":"X**晨明"},{"code":"B07025","name":"X.恆秝"},{"code":"B07026","name":"X**昱慶-雄"},{"code":"B07027","name":"XXX國豐-小港"},{"code":"B07028","name":"X. 大友"},{"code":"B07029","name":"X. 歐誠 B"},{"code":"B07030","name":"X**耀堅"},{"code":"B07031","name":"***豊利"},{"code":"B07032","name":"森益 %"},{"code":"B07033","name":"日誠 %"},{"code":"B07033-1","name":"日誠 % (台南店)"},{"code":"B07033-2","name":"力興 %"},{"code":"B07034","name":"榮記"},{"code":"B07035","name":"隆億"},{"code":"B07036","name":"豐彬"},{"code":"B07036-1","name":"穩澤"},{"code":"B07037","name":"X.益鈿"},{"code":"B07038","name":"益昇(弘昇)"},{"code":"B07051","name":"旭翃 BMW"},{"code":"B07052","name":"X. 和德 B"},{"code":"B07053","name":"X. 振億順 BMW"},{"code":"B07054","name":"湧盛"},{"code":"B07055","name":"乙昌(立記)"},{"code":"B07056","name":"元啟(承軒)"},{"code":"B07057","name":"瑞興-高雄"},{"code":"B07101","name":"X. 義興"},{"code":"B07102","name":"XXX國豊-林園"},{"code":"B07103","name":"裕銘發"},{"code":"B07104","name":"X**德興"},{"code":"B07105","name":"X**華興"},{"code":"B07106","name":"廣達-岡山 %"},{"code":"B07107","name":"翰陽"},{"code":"B07108","name":"X**元益"},{"code":"B07109","name":"X**裕隆-高"},{"code":"B07110","name":"X**裕太"},{"code":"B07111","name":"X**連冠"},{"code":"B07112","name":"勝美(協益)"},{"code":"B07113","name":"X. 順豐"},{"code":"B07114","name":"輝達(新富凱)"},{"code":"B07115","name":"晨賀"},{"code":"B07116","name":"朝陽 %"},{"code":"B07117","name":"世基"},{"code":"B08002","name":"X**日誠"},{"code":"B08003","name":"X?? 新三"},{"code":"B08004","name":"X**昱慶-屏"},{"code":"B08005","name":"歐德 B"},{"code":"B08008","name":"上順"},{"code":"B08009","name":"X.**擎鴻"},{"code":"B08010","name":"X**漢潤"},{"code":"B08011","name":"福億"},{"code":"B08012","name":"南星 %"},{"code":"B08015","name":"俊安"},{"code":"B08021","name":"達億 %"},{"code":"B08022","name":"東昇-屏"},{"code":"B08025","name":"順發"},{"code":"B08026","name":"聯興"},{"code":"B08201","name":"利興"},{"code":"B08901","name":"東昇-台東-B"},{"code":"B08902","name":"日昇"},{"code":"B08903","name":"X. 豐昇"},{"code":"B08905","name":"鴻展"},{"code":"B08906","name":"富豐"},{"code":"B10001","name":"瑞成 %"},{"code":"B10002","name":"茂原"},{"code":"B10301","name":"育誠"},{"code":"B10301-1","name":"育誠-台中店"},{"code":"B10301-2","name":"雙弘"},{"code":"B10302","name":"伸有"},{"code":"B10303","name":"于昌"},{"code":"B10304","name":"X**恆憶"},{"code":"B10305","name":"X**華峰"},{"code":"B10308","name":"伍太-台北"},{"code":"B10309","name":"鋒霖(裕隆)"},{"code":"B10310","name":"X. 麒詮"},{"code":"B10311","name":"X**振興"},{"code":"B10312","name":"勝發-水箱-永財旺"},{"code":"B10314","name":"力強 VW"},{"code":"B10315","name":"彰冠 CH"},{"code":"B10316","name":"X. 銘鋐"},{"code":"B10317","name":"X. 千琦"},{"code":"B10318","name":"X. 永鵬"},{"code":"B10319","name":"億誠 (現金)"},{"code":"B10320","name":"得勝-材料-永財旺"},{"code":"B10321","name":"佳泰"},{"code":"B10322","name":"裕太"},{"code":"B10401","name":"今喜 B"},{"code":"B10402","name":"X. 路加"},{"code":"B10403","name":"匯信"},{"code":"B10404","name":"德群-VW %"},{"code":"B10405","name":"X. 阿元"},{"code":"B10406","name":"X. 宏聲"},{"code":"B10407","name":"X. 大昇"},{"code":"B10408","name":"X. 伸全 TO"},{"code":"B10409","name":"弘奇(古河)"},{"code":"B10410","name":"上全 B"},{"code":"B10411","name":"X. 尚利 HO"},{"code":"B10412","name":"X**東貿  B"},{"code":"B10413","name":"如億"},{"code":"B10415","name":"吉霖-R %"},{"code":"B10416","name":"X**三和"},{"code":"B10417","name":"X. 錦記"},{"code":"B10418","name":"X. 昇群 B"},{"code":"B10419","name":"X. 吉事 KR"},{"code":"B10420","name":"X. 漢城"},{"code":"B10421","name":"振山 B"},{"code":"B10422","name":"善皓 VO"},{"code":"B10423","name":"X**富正"},{"code":"B10424","name":"X. 廣聯 FO"},{"code":"B10425","name":"祥暉"},{"code":"B10425-1","name":"祥暉 (汐止店)"},{"code":"B10426","name":"X. 騰揚"},{"code":"B10427","name":"X. 永詮 B"},{"code":"B10428","name":"X. 興煒 KR"},{"code":"B10429","name":"X. 信宏"},{"code":"B10432","name":"X. 千德 B"},{"code":"B10433","name":"X. 偉杰 IS"},{"code":"B10434","name":"X. 泰好"},{"code":"B10435","name":"民族"},{"code":"B10436","name":"X. 瑞德"},{"code":"B10437","name":"X. 嘉洲* 現金"},{"code":"B10438","name":"動馳(萊克)VO-B"},{"code":"B10438-1","name":"杰特"},{"code":"B10439","name":"X. 新晟 VW"},{"code":"B10440","name":"X. 金記 VW"},{"code":"B10441","name":"恆迎-B VW(龜山)"},{"code":"B10441-1","name":"恆迎-B VW(台北)"},{"code":"B10442","name":"X. 世芳"},{"code":"B10443","name":"X. 瀚盛"},{"code":"B10444","name":"X. 謚親"},{"code":"B10445","name":"X. 通園"},{"code":"B10446","name":"X. 衡昌"},{"code":"B10447","name":"天賞"},{"code":"B10448","name":"石鎰"},{"code":"B10501","name":"鼎歆"},{"code":"B10502","name":"川葉"},{"code":"B10503","name":"大倫"},{"code":"B10504","name":"廣壕 (現金)"},{"code":"B10505","name":"滿漢 B"},{"code":"B10506","name":"得瑋"},{"code":"B10507","name":"X**百發 TO"},{"code":"B10509","name":"X. 金華 %"},{"code":"B10510","name":"X**協和"},{"code":"B10511","name":"X**金年"},{"code":"B10513","name":"X. 德瑞"},{"code":"B10515","name":"隆星"},{"code":"B10516","name":"宇凱(嘉川-北)"},{"code":"B10518","name":"X**川裕 D"},{"code":"B10519","name":"X. 慶峰"},{"code":"B10520","name":"國瑞"},{"code":"B10601","name":"X**正吉"},{"code":"B10602","name":"X. 順源"},{"code":"B10603","name":"佳陽"},{"code":"B10606","name":"翰達(金星)"},{"code":"B10607","name":"X. 順義"},{"code":"B10608","name":"鑫晟"},{"code":"B10609","name":"X. 金興"},{"code":"B10651","name":"X**納安"},{"code":"B10801","name":"宏陞"},{"code":"B10802","name":"X. 長煜"},{"code":"B10803","name":"X**財福"},{"code":"B10804","name":"X. 東日"},{"code":"B10805","name":"泓瑋"},{"code":"B11002","name":"X**三冷"},{"code":"B11003","name":"聯利(德昶) 現金"},{"code":"B11004","name":"健富"},{"code":"B11005","name":"啟全"},{"code":"B11005-1","name":"士通汽車"},{"code":"B11006","name":"東強 %"},{"code":"B11006-1","name":"益田"},{"code":"B11006-2","name":"東強(汐止店)"},{"code":"B11007","name":"晟基"},{"code":"B11008","name":"X**承佳"},{"code":"B11009","name":"永基 %"},{"code":"B11010","name":"X. 柏輝*現金"},{"code":"B11011","name":"X. 利澤"},{"code":"B11013","name":"***友力"},{"code":"B11014","name":"X**清華"},{"code":"B11101","name":"伍信(明揚)"},{"code":"B11102","name":"X**合同興"},{"code":"B11103","name":"裕昌-現金"},{"code":"B11104","name":"XXX嘉祥"},{"code":"B11105","name":"聯意-提醒匯款"},{"code":"B11106","name":"X. 瑞強"},{"code":"B11107","name":"世鼎"},{"code":"B11108","name":"X. 磺溪"},{"code":"B11111","name":"X**德盛-北"},{"code":"B11112","name":"X. 阡禾 KR"},{"code":"B11113","name":"X. 揚昇"},{"code":"B11114","name":"盈嘉"},{"code":"B11401","name":"台星-台北"},{"code":"B11402","name":"鋐品 B"},{"code":"B11403","name":"大震"},{"code":"B11404","name":"啟旺"},{"code":"B11405","name":"冠城 D"},{"code":"B11406","name":"東城"},{"code":"B11407","name":"X. 好朋友"},{"code":"B11408","name":"X. 東進"},{"code":"B11409","name":"新誠"},{"code":"B11502","name":"鋒霖-南港 %"},{"code":"B11503","name":"XX奇盛"},{"code":"B11504","name":"欣融"},{"code":"B11505","name":"新凱"},{"code":"B11506","name":"東輝"},{"code":"B11508","name":"優融-B"},{"code":"B11509","name":"X**大震行"},{"code":"B11602","name":"協益 %"},{"code":"B11603","name":"茗虹(明原)-辛亥店"},{"code":"B11603-1","name":"X. 茗虹(明原)-安坑店"},{"code":"B11604","name":"X. 廣傑"},{"code":"B11605","name":"聯豪"},{"code":"B11606","name":"技匠(SMART) 現金戶"},{"code":"B20001","name":"基隆"},{"code":"B20002","name":"廣發(震泓)"},{"code":"B20003","name":"X**德聯"},{"code":"B20004","name":"一路(麒翔)現金"},{"code":"B20200","name":"御富(永財旺總公司)"},{"code":"B20201","name":"勝發-材料-永財旺-3"},{"code":"B20301","name":"X**德耀"},{"code":"B20501","name":"榮發-基"},{"code":"B22001","name":"連倉"},{"code":"B22002","name":"X**信宇"},{"code":"B22003","name":"怡安"},{"code":"B22004","name":"X** 高晟* 現金"},{"code":"B22006","name":"德益 %"},{"code":"B22009","name":"玉興"},{"code":"B22010","name":"昇躍(永胜)"},{"code":"B22011","name":"X**辰岡"},{"code":"B22012","name":"欽盛 SK"},{"code":"B22013","name":"X  銘道"},{"code":"B22014","name":"X**昇錏(嘉川板橋)"},{"code":"B22015","name":"信和 %"},{"code":"B22016","name":"博丞(正圓)"},{"code":"B22017","name":"川泰-現金"},{"code":"B22018","name":"X**萬久"},{"code":"B22019","name":"板新 %"},{"code":"B22020","name":"堃泰"},{"code":"B22021","name":"永全"},{"code":"B22101","name":"勛一"},{"code":"B22102","name":"耐迪*現金"},{"code":"B22103","name":"駿翰"},{"code":"B23101","name":"世合"},{"code":"B23102","name":"天呈(天承)"},{"code":"B23103","name":"世新*現金"},{"code":"B23104","name":"凱鑫"},{"code":"B23144","name":"益大(永杰)"},{"code":"B23402","name":"捷新"},{"code":"B23403","name":"森泰(萃泰) B"},{"code":"B23501","name":"亞崧"},{"code":"B23502","name":"X**昆成"},{"code":"B23503","name":"X**威昌"},{"code":"B23504","name":"X. 翔好"},{"code":"B23505","name":"X. 中濠"},{"code":"B23506","name":"X. 三拾"},{"code":"B23507","name":"鴻杰 %"},{"code":"B23508","name":"XX睿麟 (112/11/15結清帳單)"},{"code":"B23509","name":"X. 東惠"},{"code":"B23510","name":"嘉川(中和)"},{"code":"B23510-1","name":"嘉川(台北店)"},{"code":"B23511","name":"X. 富笙"},{"code":"B23512","name":"X. 承龍"},{"code":"B23513","name":"敦德"},{"code":"B23514","name":"廣泰-中和 % (現金帳)"},{"code":"B23515","name":"薪和"},{"code":"B23516","name":"宜家(現金)"},{"code":"B23601","name":"三尚"},{"code":"B23602","name":"鋐憶 W-現金"},{"code":"B23603","name":"茂銓行"},{"code":"B23604","name":"弘奇"},{"code":"B23605","name":"薪宇-現金"},{"code":"B23606","name":"吉利*現金"},{"code":"B23701","name":"台德"},{"code":"B23702","name":"新造"},{"code":"B23801","name":"鉅剛"},{"code":"B23802","name":"忠利"},{"code":"B23803","name":"大安"},{"code":"B23804","name":"刣鈦(忠泰)"},{"code":"B23805","name":"X**鈶益"},{"code":"B23806","name":"逢原-B"},{"code":"B23901","name":"信毅"},{"code":"B23902","name":"銓勝 (現金)"},{"code":"B24101","name":"X**恆旺"},{"code":"B24102","name":"X**通益"},{"code":"B24103","name":"X**久互"},{"code":"B24104","name":"X. 聯一"},{"code":"B24105","name":"雙鏘-小車-B"},{"code":"B24106","name":"銘峰"},{"code":"B24107","name":"X**申伊"},{"code":"B24108","name":"忠泰-三重(現金)"},{"code":"B24109","name":"X**聯邦"},{"code":"B24110","name":"大衛王"},{"code":"B24111","name":"將業"},{"code":"B24112","name":"晁暘"},{"code":"B24113","name":"成豐"},{"code":"B24114","name":"雙鏘-大車"},{"code":"B24115","name":"永興 KR(現金)"},{"code":"B24116","name":"X. 廣威  現金帳"},{"code":"B24117","name":"X**悅盛 D"},{"code":"B24118","name":"純億"},{"code":"B24119","name":"上引*現金"},{"code":"B24120","name":"泰億-現金"},{"code":"B24121","name":"恆翊"},{"code":"B24122","name":"鈺洋"},{"code":"B24123","name":"勝駿(台旭分店)"},{"code":"B24124","name":"響駿"},{"code":"B24125","name":"台旭"},{"code":"B24201","name":"榮泰"},{"code":"B24202","name":"元閏"},{"code":"B24203","name":"銘志 %"},{"code":"B24204","name":"X**上慶"},{"code":"B24205","name":"X**冷堡"},{"code":"B24206","name":"X**開泰"},{"code":"B24207","name":"台旭-D"},{"code":"B24208","name":"信暘(德)"},{"code":"B24209","name":"上利"},{"code":"B24210","name":"X**豐霖"},{"code":"B24211","name":"合用-HO*現金"},{"code":"B24212","name":"御之財*現金"},{"code":"B24213","name":"銘祥*現金"},{"code":"B24214","name":"X. 廣泰-新莊(2月截止)"},{"code":"B24215","name":"聖威柏克-B"},{"code":"B24216","name":"滿翰-B"},{"code":"B24217","name":"錦泰-W* 現金"},{"code":"B24218","name":"統力-W"},{"code":"B24219","name":"添利"},{"code":"B24220","name":"偉德-W* 現金"},{"code":"B24221","name":"X. 瓏璟-CH"},{"code":"B24222","name":"雙發"},{"code":"B24223","name":"柏銓"},{"code":"B24224","name":"太順"},{"code":"B24225","name":"東鎰*現金"},{"code":"B24226","name":"鋐泰 *現金"},{"code":"B24227","name":"賓宜 *現金"},{"code":"B24228","name":"永安"},{"code":"B24229","name":"裕信"},{"code":"B24302","name":"X**志鋐"},{"code":"B24303","name":"邑泰*-IS現金"},{"code":"B24304","name":"X**興益"},{"code":"B24305","name":"X.**宏隆"},{"code":"B24306","name":"利竑"},{"code":"B24307","name":"X**良徠*現金"},{"code":"B24309","name":"X**鼎佳達(現金)"},{"code":"B24310","name":"坤哥/坤泰(現金)"},{"code":"B24311","name":"富鼎昌"},{"code":"B24312","name":"CS-車宮車業"},{"code":"B24701","name":"合易 %"},{"code":"B24702","name":"盛富"},{"code":"B24703","name":"XXX 安鈦-蘆"},{"code":"B24704","name":"X**永信"},{"code":"B24705","name":"X**固有"},{"code":"B24706","name":"X**北展"},{"code":"B24707","name":"X**伯瑤行"},{"code":"B24708","name":"嘉川(蘆洲)"},{"code":"B24709","name":"伍泰-蘆洲 %"},{"code":"B24801","name":"X**興益"},{"code":"B24802","name":"昇群-B"},{"code":"B24803","name":"滿好-B"},{"code":"B24804","name":"辰岡"},{"code":"B24805","name":"X. 傑弘"},{"code":"B24806","name":"X. 達德 *現金"},{"code":"B24901","name":"X**元啟"},{"code":"B25101","name":"X**鴻業"},{"code":"B25102","name":"尚宏(銘峰)"},{"code":"B25104","name":"X**凱勝"},{"code":"C0201","name":"資基"},{"code":"C0202","name":"擎貿"},{"code":"C0203","name":"吉恩維"},{"code":"C0204","name":"保地"},{"code":"C0205","name":"凱茀"},{"code":"C0206","name":"金九"},{"code":"C0207","name":"捷拓"},{"code":"C0208","name":"輝林"},{"code":"Z99999","name":"零售客戶"}];
 
 function normalizeCustomerKeyword(v){
-  return String(v||'').trim().toLowerCase().replace(/\s+/g,'');
+  return String(v||'')
+    .normalize('NFKC')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g,'')
+    .replace(/[－–—]/g,'-');
 }
 
 function customerSearchMatches(query){
@@ -2377,60 +2627,310 @@ function customerSearchMatches(query){
   }).slice(0,40);
 }
 
+let selectedReceiptCustomers = [];
+
+function customerKey_(c){
+  return String(c && c.code || '') + '|' + String(c && c.name || '');
+}
+
+function openCustomerMultiPanel(){
+  const panel=$('receiptCustomerPanel');
+  const input=$('customerSearchInput');
+  const card=$('customerSearchCard');
+
+  if(card){
+    card.style.zIndex='70000';
+    card.style.overflow='visible';
+  }
+
+  if(panel){
+    panel.classList.add('open');
+    panel.style.display='block';
+    panel.style.zIndex='80000';
+  }
+
+  if(input) input.setAttribute('aria-expanded','true');
+}
+
 function hideCustomerSearchResults(){
+  const panel=$('receiptCustomerPanel');
+  const input=$('customerSearchInput');
+  const card=$('customerSearchCard');
+
+  if(panel){
+    panel.classList.remove('open');
+    panel.style.display='';
+    panel.style.zIndex='';
+  }
+
+  if(card){
+    card.style.zIndex='';
+    card.style.overflow='visible';
+  }
+
+  if(input) input.setAttribute('aria-expanded','false');
+}
+
+function updateReceiptCustomerSearchHint(){
+  const input=$('customerSearchInput');
+  const count=$('customerSelectedCount');
+  const total=selectedReceiptCustomers.length;
+
+  if(count){
+    if(!total){
+      count.textContent='已選 0 家';
+    }else{
+      const names=selectedReceiptCustomers
+        .map(c=>c.name || c.code)
+        .filter(Boolean);
+      count.textContent='已選 '+total+' 家：'+names.join('、');
+    }
+  }
+
+  if(input){
+    if(total===0){
+      input.placeholder='選擇客戶／輸入關鍵字搜尋';
+      input.title='輸入客戶編號或客戶簡稱搜尋，可複選多家';
+    }else if(total===1){
+      input.placeholder='已選 '+(selectedReceiptCustomers[0].name || selectedReceiptCustomers[0].code)+'｜繼續搜尋';
+      input.title='目前已選 1 家，可繼續輸入關鍵字增加客戶';
+    }else{
+      input.placeholder='已選 '+total+' 家｜繼續輸入關鍵字搜尋';
+      input.title='目前已選 '+total+' 家，可繼續搜尋並複選';
+    }
+  }
+}
+
+function syncReceiptCustomerCheckboxes(){
   const box=$('customerSearchResults');
-  if(box) box.style.display='none';
+  if(!box) return;
+
+  const selectedKeys=new Set(selectedReceiptCustomers.map(customerKey_));
+
+  box.querySelectorAll('input[type="checkbox"][data-customer-key]').forEach(cb=>{
+    cb.checked=selectedKeys.has(cb.dataset.customerKey);
+  });
+}
+
+function syncReceiptCustomerFields(){
+  $('customerCode').value=selectedReceiptCustomers.map(c=>c.code).filter(Boolean).join('、');
+  $('customer').value=selectedReceiptCustomers.map(c=>c.name).filter(Boolean).join('、');
+
+  updateReceiptCustomerSearchHint();
+  syncReceiptCustomerCheckboxes();
+
+  if(!receiptManualMode) updateReceipt();
+}
+
+function setReceiptCustomers(list){
+  selectedReceiptCustomers=[];
+
+  (Array.isArray(list)?list:[]).forEach(c=>{
+    if(!c) return;
+
+    const code=String(c.code||'').trim();
+    const name=String(c.name||'').trim();
+
+    if(!code && !name) return;
+
+    const key=code+'|'+name;
+
+    if(!selectedReceiptCustomers.some(x=>customerKey_(x)===key)){
+      selectedReceiptCustomers.push({code,name});
+    }
+  });
+
+  syncReceiptCustomerFields();
+
+  const input=$('customerSearchInput');
+  if(input) input.value='';
+  renderCustomerSearch('');
+}
+
+function toggleReceiptCustomer(c,forceChecked){
+  if(!c) return;
+
+  const key=customerKey_(c);
+  const idx=selectedReceiptCustomers.findIndex(x=>customerKey_(x)===key);
+
+  const shouldSelect =
+    typeof forceChecked === 'boolean'
+      ? forceChecked
+      : idx < 0;
+
+  if(shouldSelect && idx<0){
+    selectedReceiptCustomers.push({
+      code:c.code||'',
+      name:c.name||''
+    });
+  }else if(!shouldSelect && idx>=0){
+    selectedReceiptCustomers.splice(idx,1);
+  }
+
+  syncReceiptCustomerFields();
+}
+
+function customerListMatches(query){
+  const q=String(query||'').trim();
+
+  if(!q){
+    return CUSTOMER_MASTER;
+  }
+
+  const words=q
+    .split(/\s+/)
+    .map(normalizeCustomerKeyword)
+    .filter(Boolean);
+
+  return CUSTOMER_MASTER.filter(item=>{
+    const code=normalizeCustomerKeyword(item.code||'');
+    const name=normalizeCustomerKeyword(item.name||'');
+    const target=code+name;
+
+    return words.every(w=>
+      code.includes(w) ||
+      name.includes(w) ||
+      target.includes(w)
+    );
+  }).slice(0,80);
 }
 
 function renderCustomerSearch(query){
   const box=$('customerSearchResults');
   if(!box) return;
-  const matches=customerSearchMatches(query);
 
-  if(!String(query||'').trim()){
-    box.innerHTML='';
-    box.style.display='none';
-    return;
-  }
+  const matches=customerListMatches(query);
+  const selectedKeys=new Set(selectedReceiptCustomers.map(customerKey_));
 
   if(!matches.length){
-    box.innerHTML='<div class="customer-search-empty">找不到符合的客戶資料</div>';
-    box.style.display='block';
+    box.innerHTML='<div class="customer-checkbox-empty">找不到符合的客戶資料</div>';
     return;
   }
 
-  box.innerHTML=matches.map((c,i)=>`
-    <button type="button" class="customer-search-item" data-index="${i}">
-      <span class="customer-search-code">${esc(c.code)}</span>
-      <span class="customer-search-name">${esc(c.name)}</span>
-    </button>
-  `).join('');
+  box.innerHTML=matches.map((c,i)=>{
+    const key=customerKey_(c);
+    const checked=selectedKeys.has(key) ? ' checked' : '';
 
-  box.querySelectorAll('.customer-search-item').forEach((btn,i)=>{
-    btn.addEventListener('click',()=>{
+    return `
+      <label class="receipt-customer-option">
+        <input type="checkbox"
+               data-customer-index="${i}"
+               data-customer-key="${esc(key)}"${checked}>
+        <span class="customer-option-text">
+          <span class="customer-option-code">${esc(c.code)}</span>
+          <span class="customer-option-name">${esc(c.name)}</span>
+        </span>
+      </label>
+    `;
+  }).join('');
+
+  box.querySelectorAll('input[type="checkbox"][data-customer-index]').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const i=Number(cb.dataset.customerIndex);
       const c=matches[i];
-      $('customerCode').value=c.code;
-      $('customer').value=c.name;
-      $('customerSearchInput').value=c.code+'　'+c.name;
-      hideCustomerSearchResults();
 
-      if(!receiptManualMode) updateReceipt();
+      if(c){
+        toggleReceiptCustomer(c,cb.checked);
+
+        // 勾選後保持下拉開啟，方便再選下一家。
+        openCustomerMultiPanel();
+      }
     });
   });
-
-  box.style.display='block';
 }
 
+function initCustomerSearch(){
+  const input=$('customerSearchInput');
+  const panel=$('receiptCustomerPanel');
+  const toggle=$('receiptCustomerToggle');
+
+  if(!input || !panel || !toggle) return;
+
+  $('customerDataStatus').textContent=
+    `已內建 ${CUSTOMER_MASTER.length} 筆客戶資料；直接在「選擇客戶」欄輸入關鍵字，下拉後可複選多家。`;
+
+  renderCustomerSearch('');
+  updateReceiptCustomerSearchHint();
+
+  // 點欄位就展開全部客戶；直接打字即可即時篩選。
+  input.addEventListener('focus',()=>{
+    renderCustomerSearch(input.value);
+    openCustomerMultiPanel();
+  });
+
+  input.addEventListener('click',e=>{
+    e.stopPropagation();
+    renderCustomerSearch(input.value);
+    openCustomerMultiPanel();
+  });
+
+  input.addEventListener('input',()=>{
+    const keyword=input.value||'';
+    renderCustomerSearch(keyword);
+    openCustomerMultiPanel();
+
+    // 確保搜尋結果面板在手機瀏覽器也立即可見
+    const panel=$('receiptCustomerPanel');
+    if(panel){
+      panel.style.display='block';
+    }
+  });
+
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Escape'){
+      hideCustomerSearchResults();
+      input.blur();
+    }
+  });
+
+  toggle.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isOpen=panel.classList.contains('open');
+
+    if(isOpen){
+      hideCustomerSearchResults();
+    }else{
+      renderCustomerSearch(input.value);
+      openCustomerMultiPanel();
+      input.focus();
+    }
+  });
+
+  // 點複選清單內部不要收合，才能連續勾選。
+  panel.addEventListener('pointerdown',e=>{
+    e.stopPropagation();
+  });
+
+  panel.addEventListener('click',e=>{
+    e.stopPropagation();
+  });
+
+  document.addEventListener('click',e=>{
+    if(!e.target.closest('#receiptCustomerMulti')){
+      hideCustomerSearchResults();
+
+      // 關閉後清除搜尋字，下一次點開重新顯示完整清單；
+      // 已勾選客戶仍保留。
+      if(input.value){
+        input.value='';
+        renderCustomerSearch('');
+      }
+    }
+  });
+}
 
 function initReceiptMonthSelect(){
   const sel=$('receiptMonthSelect');
-  if(!sel) return;
+  const panel=$('receiptMonthPanel');
+  const btn=$('receiptMonthButton');
+  if(!sel || !panel || !btn) return;
 
   const now=new Date();
   const currentYear=now.getFullYear();
   const currentMonth=now.getMonth()+1;
 
-  // 顯示前 12 個月 + 本月 + 後 3 個月
   const options=[];
   for(let offset=-12; offset<=3; offset++){
     const d=new Date(currentYear,currentMonth-1+offset,1);
@@ -2441,47 +2941,99 @@ function initReceiptMonthSelect(){
   }
 
   sel.innerHTML=options.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
+  panel.innerHTML=options.map((o,i)=>`
+    <label class="receipt-month-option">
+      <input type="checkbox" data-month-index="${i}" value="${o.value}">
+      <span>${o.label} <small style="color:var(--muted);font-weight:600">${o.value.slice(0,4)}</small></span>
+    </label>
+  `).join('');
 
-  const saved=localStorage.getItem('receiptSelectedMonth');
+  let savedMonths=[];
+  try{
+    const raw=JSON.parse(localStorage.getItem('receiptSelectedMonths')||'[]');
+    if(Array.isArray(raw)) savedMonths=raw;
+  }catch(e){}
+
+  if(!savedMonths.length){
+    const oldSaved=localStorage.getItem('receiptSelectedMonth');
+    if(oldSaved) savedMonths=[oldSaved];
+  }
+
   const current=`${currentYear}-${String(currentMonth).padStart(2,'0')}`;
-  sel.value = options.some(o=>o.value===saved) ? saved : current;
+  if(!savedMonths.some(v=>options.some(o=>o.value===v))) savedMonths=[current];
 
-  sel.addEventListener('change',()=>{
-    localStorage.setItem('receiptSelectedMonth',sel.value);
-    if($('receiptMemo')){
-      // 只保留程式內部值，不強制改備註內容
-      $('receiptMemo').dataset.receiptMonth=sel.value;
-    }
+  setReceiptSelectedMonths(savedMonths,false);
+
+  panel.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+    cb.addEventListener('change',()=>{
+      const selected=[...panel.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
+      setReceiptSelectedMonths(selected,true);
+    });
   });
 
-  if($('receiptMemo')) $('receiptMemo').dataset.receiptMonth=sel.value;
-}
-
-function getReceiptSelectedMonth(){
-  return $('receiptMonthSelect') ? $('receiptMonthSelect').value : '';
-}
-
-function initCustomerSearch(){
-  const input=$('customerSearchInput');
-  if(!input) return;
-
-  $('customerDataStatus').textContent=`已內建 ${CUSTOMER_MASTER.length} 筆客戶資料，可用客戶編號或客戶簡稱關鍵字查詢。`;
-
-  input.addEventListener('input',()=>renderCustomerSearch(input.value));
-  input.addEventListener('focus',()=>{
-    if(input.value.trim()) renderCustomerSearch(input.value);
-  });
-  input.addEventListener('keydown',e=>{
-    if(e.key==='Escape'){
-      hideCustomerSearchResults();
-      input.blur();
-    }
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const open=!panel.classList.contains('open');
+    panel.classList.toggle('open',open);
+    btn.setAttribute('aria-expanded',open?'true':'false');
   });
 
   document.addEventListener('click',e=>{
-    if(!e.target.closest('#customerSearchCard')) hideCustomerSearchResults();
+    if(!e.target.closest('#receiptMonthMulti')){
+      panel.classList.remove('open');
+      btn.setAttribute('aria-expanded','false');
+    }
   });
 }
+
+function setReceiptSelectedMonths(values,save=true){
+  const sel=$('receiptMonthSelect');
+  const panel=$('receiptMonthPanel');
+  const btn=$('receiptMonthButton');
+  const vals=[...new Set((Array.isArray(values)?values:[]).filter(Boolean))];
+
+  if(sel){
+    [...sel.options].forEach(opt=>{ opt.selected=vals.includes(opt.value); });
+  }
+  if(panel){
+    panel.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+      cb.checked=vals.includes(cb.value);
+    });
+  }
+
+  const labels=vals.map(v=>{
+    const m=Number(v.split('-')[1]||0);
+    return m ? `${m}月` : v;
+  });
+
+  if(btn){
+    const text=btn.querySelector('.month-button-text');
+    if(text){
+      if(!labels.length) text.textContent='選擇月份';
+      else if(labels.length<=2) text.textContent=labels.join('、');
+      else text.textContent=labels.slice(0,2).join('、')+` +${labels.length-2}`;
+    }
+  }
+
+  if(save){
+    localStorage.setItem('receiptSelectedMonths',JSON.stringify(vals));
+    if(vals.length===1) localStorage.setItem('receiptSelectedMonth',vals[0]);
+  }
+
+  if($('receiptMemo')) $('receiptMemo').dataset.receiptMonth=vals.join('、');
+  if(!receiptManualMode) updateReceipt();
+}
+
+function getReceiptSelectedMonths(){
+  const sel=$('receiptMonthSelect');
+  return sel ? [...sel.selectedOptions].map(o=>o.value) : [];
+}
+
+function getReceiptSelectedMonth(){
+  return getReceiptSelectedMonths().join('、');
+}
+
+
 
 const TARGET_SPREADSHEET_ID = '1D5olrqVKOSFdx0vpop1MB7TSV7I72plLxbcqR-nZx5I';
 const TARGET_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1D5olrqVKOSFdx0vpop1MB7TSV7I72plLxbcqR-nZx5I/edit?usp=sharing';
@@ -2508,8 +3060,10 @@ function getReceiptPayload(){
       receiptNo:'',
       receiptDate:$('receiptDate').value||'',
       receiptMonth:getReceiptSelectedMonth(),
+      receiptMonths:getReceiptSelectedMonths(),
       customerCode:$('customerCode').value||'',
       customer:$('customer').value||'',
+      customers:selectedReceiptCustomers.map(c=>({code:c.code,name:c.name})),
       offsetDateNo:getReceiptSelectedMonth(),
       memo:$('receiptMemo').value||'',
       mode:selectedRate()===0?'正常收帳':('現金扣 '+selectedRate()+'%'),
@@ -2627,7 +3181,7 @@ function showDetail(){
   const modeText = selectedRate()===0 ? '正常收帳' : `現金扣 ${selectedRate()}%`;
   const chequePhotoCount=[...document.querySelectorAll('.check-row')].filter(row=>row.dataset.photoData).length;
   const rows=[
-    ['收款月份',getReceiptSelectedMonth()||'—'],
+    ['收款月份',getReceiptSelectedMonths().map(v=>v.replace('-',' / ')).join('、')||'—'],
     ['客戶編號',$('customerCode').value||'—'],
     ['客戶',$('customer').value||'—'],
     ['收帳方式',modeText],
@@ -2801,15 +3355,33 @@ function miniCalcOpen(){
   const panel=$('miniCalculator');
   const display=$('miniCalcDisplay');
   if(!panel || !display) return;
+
   panel.hidden=false;
+  miniCalcJustEvaluated=false;
+
   if(miniCalcTargetField){
     const raw = miniCalcTargetField.matches('input')
       ? String(miniCalcTargetField.value || '').trim()
       : String(miniCalcTargetField.textContent || '').replace(/,/g,'').trim();
+
     const n=Number(raw);
-    display.value = raw !== '' && Number.isFinite(n) ? String(n) : '0';
+
+    if(raw !== '' && Number.isFinite(n)){
+      // 欄位原值為 0 時，開啟計算機立即清空，方便直接輸入。
+      display.value = n === 0 ? '' : String(n);
+    }else{
+      display.value='';
+    }
+  }else{
+    // 沒有指定欄位時，計算機原本顯示 0 也會在開啟時自動消失。
+    const current=String(display.value||'').trim();
+    display.value = current==='0' ? '' : current;
   }
-  requestAnimationFrame(()=>display.focus({preventScroll:true}));
+
+  requestAnimationFrame(()=>{
+    display.focus({preventScroll:true});
+    try{ display.setSelectionRange(display.value.length,display.value.length); }catch(err){}
+  });
 }
 
 function miniCalcClose(){
@@ -3015,7 +3587,7 @@ $('miniCalcKeys').addEventListener('click', e=>{
   const action=btn.dataset.action;
   if(value!==undefined){ miniCalcAppend(value); return; }
   if(action==='clear'){
-    $('miniCalcDisplay').value='0';
+    $('miniCalcDisplay').value='';
     miniCalcJustEvaluated=false;
   }else if(action==='backspace'){
     const d=$('miniCalcDisplay');
