@@ -139,7 +139,7 @@ h1{font-size:24px;margin:0}
 }
 .customer-month-panel{
   display:none;position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:9999;
-  max-height:300px;overflow:auto;background:#fff;border:1px solid #ddcfcd;border-radius:12px;
+  max-height:min(72dvh, 620px);overflow:auto;background:#fff;border:1px solid #ddcfcd;border-radius:12px;
   box-shadow:0 12px 28px rgba(60,35,40,.16);padding:8px
 }
 .customer-month-panel.open{display:block}
@@ -2770,6 +2770,34 @@ function customerKey_(c){
 }
 
 
+
+function resizeDropdownToViewport(panel, anchorEl){
+  if(!panel || !anchorEl) return;
+
+  const rect = anchorEl.getBoundingClientRect();
+  const viewportH = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+
+  // 保留底部一點安全邊距，讓清單看起來是「一路下拉到底」但不貼齊底部。
+  const bottomGap = 12;
+  const available = Math.max(180, Math.floor(viewportH - rect.bottom - bottomGap));
+
+  panel.style.maxHeight = available + 'px';
+}
+
+function refreshOpenDropdownHeights(){
+  const customerPanel = $('receiptCustomerPanel');
+  const monthPanel = $('receiptMonthPanel');
+  const customerAnchor = $('receiptCustomerMulti');
+  const monthAnchor = $('receiptMonthMulti');
+
+  if(customerPanel && customerPanel.classList.contains('open')){
+    resizeDropdownToViewport(customerPanel, customerAnchor || customerPanel.parentElement);
+  }
+  if(monthPanel && monthPanel.classList.contains('open')){
+    resizeDropdownToViewport(monthPanel, monthAnchor || monthPanel.parentElement);
+  }
+}
+
 function isAnyDropdownOpen(){
   const customerPanel = $('receiptCustomerPanel');
   const monthPanel = $('receiptMonthPanel');
@@ -2796,6 +2824,7 @@ function openCustomerMultiPanel(){
     panel.classList.add('open');
     panel.style.display='block';
     panel.style.zIndex='80000';
+    resizeDropdownToViewport(panel, $('receiptCustomerMulti'));
   }
 
   if(input) input.setAttribute('aria-expanded','true');
@@ -3127,6 +3156,9 @@ function initReceiptMonthSelect(){
     const open=!panel.classList.contains('open');
     panel.classList.toggle('open',open);
     btn.setAttribute('aria-expanded',open?'true':'false');
+    if(open){
+      resizeDropdownToViewport(panel, $('receiptMonthMulti'));
+    }
     syncDropdownSoftenState();
   });
 
@@ -3503,6 +3535,14 @@ document.addEventListener('pointerdown', e=>{
     setMiniCalcTarget(e.target);
   }
 }, true);
+window.addEventListener('resize', refreshOpenDropdownHeights);
+window.addEventListener('orientationchange', refreshOpenDropdownHeights);
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', refreshOpenDropdownHeights);
+  window.visualViewport.addEventListener('scroll', refreshOpenDropdownHeights);
+}
+
+
 
 function miniCalcOpen(){
   const panel=$('miniCalculator');
