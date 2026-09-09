@@ -655,6 +655,23 @@ body.dropdown-soften #customerSearchCard .ar-main-toolbar > *:not(#receiptCustom
   border-radius:18px !important;
 }
 
+
+/* ===== 浮動計算機：永遠位於整個頁面最上層 ===== */
+#miniCalculator{
+  z-index:2147483647 !important;
+  isolation:isolate !important;
+  opacity:1 !important;
+  filter:none !important;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+body.dropdown-soften #miniCalculator,
+body.mini-calc-open #miniCalculator{
+  opacity:1 !important;
+  filter:none !important;
+  z-index:2147483647 !important;
+}
+
 </style>
 
 <style id="offlinePrintStyle">
@@ -3549,6 +3566,8 @@ function miniCalcOpen(){
   const display=$('miniCalcDisplay');
   if(!panel || !display) return;
 
+  document.body.classList.add('mini-calc-open');
+  panel.style.zIndex='2147483647';
   panel.hidden=false;
   miniCalcJustEvaluated=false;
 
@@ -3580,6 +3599,7 @@ function miniCalcOpen(){
 function miniCalcClose(){
   const panel=$('miniCalculator');
   if(panel) panel.hidden=true;
+  document.body.classList.remove('mini-calc-open');
 }
 
 function miniCalcNormalizeExpression(text){
@@ -3699,6 +3719,7 @@ async function miniCalcCopy(){
   if(panel){
     panel.hidden=true;
   }
+  document.body.classList.remove('mini-calc-open');
 }
 
 function isMiniCalcPasteTarget(el){
@@ -3814,6 +3835,8 @@ $('miniCalcDisplay').addEventListener('keydown', e=>{
 
   head.addEventListener('pointerdown', e=>{
     if(e.target.closest('button')) return;
+    panel.style.zIndex='2147483647';
+    document.body.classList.add('mini-calc-open');
     const rect=panel.getBoundingClientRect();
     panel.style.transform='none';
     panel.style.left=rect.left+'px';
