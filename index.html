@@ -672,6 +672,38 @@ body.mini-calc-open #miniCalculator{
   z-index:2147483647 !important;
 }
 
+
+/* ===== 浮動計算機：雙指縮放 ===== */
+#miniCalculator{
+  transform-origin:top left !important;
+  --mini-calc-scale:1;
+  transform:scale(var(--mini-calc-scale));
+}
+
+#miniCalcHead{
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+
+/* ===== 計算機雙指縮放只影響計算機，不影響背景頁面 ===== */
+#miniCalculator{
+  touch-action:none !important;
+  overscroll-behavior:contain !important;
+  -webkit-user-select:none;
+  user-select:none;
+  contain:layout paint style;
+}
+
+#miniCalculator *{
+  touch-action:none !important;
+}
+
+body.mini-calc-open{
+  overscroll-behavior:contain;
+}
+
 </style>
 
 <style id="offlinePrintStyle">
@@ -3569,6 +3601,7 @@ function miniCalcOpen(){
   document.body.classList.add('mini-calc-open');
   panel.style.zIndex='2147483647';
   panel.hidden=false;
+  panel.style.transform='scale(var(--mini-calc-scale))';
   miniCalcJustEvaluated=false;
 
   if(miniCalcTargetField){
@@ -3831,41 +3864,150 @@ $('miniCalcDisplay').addEventListener('keydown', e=>{
   const panel=$('miniCalculator');
   const head=$('miniCalcHead');
   if(!panel || !head) return;
+
   let drag=null;
+  const activePointers=new Map();
+  let pinch=null;
+
+  // 防止 Android / iOS 瀏覽器把計算機上的雙指手勢當成整頁縮放。
+  // 僅在計算機範圍內攔截，不改變背景頁面的大小或縮放比例。
+  function blockPagePinch(e){
+    if(e.cancelable) e.preventDefault();
+  }
+
+  panel.addEventListener('touchstart', e=>{
+    if(e.touches && e.touches.length>=2){
+      blockPagePinch(e);
+    }
+  }, {passive:false});
+
+  panel.addEventListener('touchmove', e=>{
+    if(e.touches && e.touches.length>=2){
+      blockPagePinch(e);
+    }
+  }, {passive:false});
+
+  // Safari / iOS 另有 gesture 事件
+  panel.addEventListener('gesturestart', blockPagePinch, {passive:false});
+  panel.addEventListener('gesturechange', blockPagePinch, {passive:false});
+  panel.addEventListener('gestureend', blockPagePinch, {passive:false});
+
+
+  function getScale(){
+    const v=parseFloat(getComputedStyle(panel).getPropertyValue('--mini-calc-scale'));
+    return Number.isFinite(v) ? v : 1;
+  }
+
+  function setScale(value){
+    const clamped=Math.min(1.8,Math.max(0.65,value));
+    panel.style.setProperty('--mini-calc-scale',String(clamped));
+    return clamped;
+  }
+
+  function pointerDistance(){
+    if(activePointers.size<2) return 0;
+    const pts=[...activePointers.values()].slice(0,2);
+    return Math.hypot(pts[1].x-pts[0].x,pts[1].y-pts[0].y);
+  }
+
+  function pointerCenter(){
+    const pts=[...activePointers.values()].slice(0,2);
+    return {
+      x:(pts[0].x+pts[1].x)/2,
+      y:(pts[0].y+pts[1].y)/2
+    };
+  }
 
   head.addEventListener('pointerdown', e=>{
     if(e.target.closest('button')) return;
+
     panel.style.zIndex='2147483647';
     document.body.classList.add('mini-calc-open');
-    const rect=panel.getBoundingClientRect();
-    panel.style.transform='none';
-    panel.style.left=rect.left+'px';
-    panel.style.top=rect.top+'px';
-    drag={
-      pointerId:e.pointerId,
-      dx:e.clientX-rect.left,
-      dy:e.clientY-rect.top
-    };
-    head.classList.add('dragging');
+
+    activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
     try{ head.setPointerCapture(e.pointerId); }catch(err){}
+
+    if(activePointers.size===1){
+      const rect=panel.getBoundingClientRect();
+      panel.style.left=rect.left+'px';
+      panel.style.top=rect.top+'px';
+
+      drag={
+        pointerId:e.pointerId,
+        dx:e.clientX-rect.left,
+        dy:e.clientY-rect.top
+      };
+      head.classList.add('dragging');
+    }
+
+    if(activePointers.size===2){
+      // 切換為雙指縮放模式，停止單指拖曳
+      drag=null;
+      head.classList.remove('dragging');
+
+      const center=pointerCenter();
+      pinch={
+        startDistance:pointerDistance(),
+        startScale:getScale(),
+        centerX:center.x,
+        centerY:center.y,
+        startLeft:parseFloat(panel.style.left)||panel.getBoundingClientRect().left,
+        startTop:parseFloat(panel.style.top)||panel.getBoundingClientRect().top
+      };
+    }
+
     e.preventDefault();
   });
 
   head.addEventListener('pointermove', e=>{
-    if(!drag || e.pointerId!==drag.pointerId) return;
-    panel.style.left=(e.clientX-drag.dx)+'px';
-    panel.style.top=(e.clientY-drag.dy)+'px';
-    e.preventDefault();
+    if(!activePointers.has(e.pointerId)) return;
+
+    activePointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+
+    if(activePointers.size>=2 && pinch){
+      const dist=pointerDistance();
+      if(pinch.startDistance>0){
+        const nextScale=setScale(pinch.startScale*(dist/pinch.startDistance));
+
+        // 讓縮放中心盡量停留在雙指中心附近
+        const ratio=nextScale/pinch.startScale;
+        panel.style.left=(pinch.centerX-(pinch.centerX-pinch.startLeft)*ratio)+'px';
+        panel.style.top=(pinch.centerY-(pinch.centerY-pinch.startTop)*ratio)+'px';
+      }
+      e.preventDefault();
+      return;
+    }
+
+    if(drag && e.pointerId===drag.pointerId){
+      panel.style.left=(e.clientX-drag.dx)+'px';
+      panel.style.top=(e.clientY-drag.dy)+'px';
+      e.preventDefault();
+    }
   });
 
-  function endDrag(e){
-    if(!drag || e.pointerId!==drag.pointerId) return;
-    drag=null;
-    head.classList.remove('dragging');
+  function endPointer(e){
+    activePointers.delete(e.pointerId);
+
     try{ head.releasePointerCapture(e.pointerId); }catch(err){}
+
+    if(activePointers.size<2){
+      pinch=null;
+    }
+
+    if(drag && e.pointerId===drag.pointerId){
+      drag=null;
+      head.classList.remove('dragging');
+    }
+
+    // 如果雙指縮放後只剩一指，不直接續拖，避免突然跳動
+    if(activePointers.size===1){
+      drag=null;
+      head.classList.remove('dragging');
+    }
   }
-  head.addEventListener('pointerup',endDrag);
-  head.addEventListener('pointercancel',endDrag);
+
+  head.addEventListener('pointerup',endPointer);
+  head.addEventListener('pointercancel',endPointer);
 })();
 
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbxecNe09UzArp9x1k6-dHdz3w1pYploneSoAN3wvMsLHtz4Fqud0Vhr-060_B9e3BU/exec';
